@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    android:id="@+id/container_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="44dp"
+        tools:context=".navigation.HomeFragment">
+
+        <!--Usage Sum-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="20dp"
+            android:background="@color/colorWhite"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="24dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/textView1"
+                    style="@style/ContentTitle"
+                    android:text="@string/aplikasi_paling_lama_diakses"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_appPalingLama"
+                    style="@style/IconTopContent"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="@+id/textView1"
+                    app:layout_constraintTop_toBottomOf="@+id/textView1"
+                    tools:src="@mipmap/ic_launcher_round" />
+
+                <TextView
+                    android:id="@+id/txt_appPalingLama"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/circular_std_book"
+                    android:textColor="@color/colorFontDark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_appPalingLama"
+                    app:layout_constraintStart_toEndOf="@id/img_appPalingLama"
+                    app:layout_constraintTop_toTopOf="@+id/img_appPalingLama"
+                    tools:text="Twitter - 1 Jam : 5 Menit" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/ContentTitle"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/penggunaan_smartphone_hari_ini"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_appPalingLama" />
+
+                <ImageView
+                    android:id="@+id/img_durasiPenggunaan"
+                    style="@style/IconTopContent"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/ic_time_24"
+                    app:layout_constraintStart_toStartOf="@+id/textView2"
+                    app:layout_constraintTop_toBottomOf="@+id/textView2"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/txt_durasiPenggunaan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/circular_std_book"
+                    android:textColor="@color/colorFontDark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_durasiPenggunaan"
+                    app:layout_constraintStart_toEndOf="@id/img_durasiPenggunaan"
+                    app:layout_constraintTop_toTopOf="@+id/img_durasiPenggunaan"
+                    tools:text="4 Jam - 5 Menit" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    style="@style/ContentTitle"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/penggunaan_internet_hari_ini"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_durasiPenggunaan" />
+
+                <FrameLayout
+                    android:id="@+id/img_penggunaanInternet"
+                    style="@style/IconTopContent"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="@+id/textView3"
+                    app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_download_24" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|top"
+                        android:src="@drawable/ic_upload_24" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/txt_penggunaanInternet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/circular_std_book"
+                    android:textColor="@color/colorFontDark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_penggunaanInternet"
+                    app:layout_constraintStart_toEndOf="@id/img_penggunaanInternet"
+                    app:layout_constraintTop_toTopOf="@+id/img_penggunaanInternet"
+                    tools:text="500 MB" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!--Riwayat Akses Aplikasi-->
+        <TextView
+            android:id="@+id/textView5"
+            style="@style/ContentTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/riwayat_akses_aplikasi"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView2" />
+
+        <!--List Of Recent App-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="20dp"
+            android:background="@color/colorWhite"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_recentApps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:isScrollContainer="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                tools:listitem="@layout/item_in_rv_recent_app" />
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
+

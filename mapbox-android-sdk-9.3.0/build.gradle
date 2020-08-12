@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('mapbox-android-sdk-9.3.0.aar'))

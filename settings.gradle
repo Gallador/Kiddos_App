@@ -1,0 +1,4 @@
+include ':mapbox-android-sdk-9.3.0'
+rootProject.name='Kiddos'
+include ':kidsapp'
+include ':parentapp'

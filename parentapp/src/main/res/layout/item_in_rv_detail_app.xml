@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:layout_marginTop="8dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_appIcon"
+        style="@style/IconTopContent"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/txt_namaApp"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/circular_std_book"
+        android:textColor="@color/colorFontDark"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/img_appIcon"
+        app:layout_constraintStart_toEndOf="@+id/img_appIcon"
+        app:layout_constraintTop_toTopOf="@+id/img_appIcon"
+        tools:text="Twitter Dsdsdsd sdfdfdfdfdfdfdf" />
+
+    <TextView
+        android:id="@+id/txt_durasi"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/circular_std_book"
+        android:textAlignment="center"
+        android:textColor="@color/colorFontDark"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_namaApp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txt_namaApp"
+        tools:text="10 Jam 50 Menit" />
+
+    <TextView
+        android:id="@+id/txt_internet"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/circular_std_book"
+        android:textAlignment="center"
+        android:textColor="@color/colorFontDark"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_durasi"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txt_durasi"
+        tools:text="500 MB" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

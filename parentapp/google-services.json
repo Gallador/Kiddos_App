@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "568179604167",
+    "firebase_url": "https://kiddos-app-c0029.firebaseio.com",
+    "project_id": "kiddos-app-c0029",
+    "storage_bucket": "kiddos-app-c0029.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568179604167:android:99746174c818b260dedce2",
+        "android_client_info": {
+          "package_name": "com.dodolz.kiddos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "568179604167-5v5quj1mcgjrsrkluds9psjg0lnne4ar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsk04K5HSELFqwxoGFsYoKb8c4hOCqGNQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "568179604167-5v5quj1mcgjrsrkluds9psjg0lnne4ar.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568179604167:android:f20b779a111c8aa0dedce2",
+        "android_client_info": {
+          "package_name": "com.dodolz.kiddos.kidsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "568179604167-5v5quj1mcgjrsrkluds9psjg0lnne4ar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsk04K5HSELFqwxoGFsYoKb8c4hOCqGNQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "568179604167-5v5quj1mcgjrsrkluds9psjg0lnne4ar.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

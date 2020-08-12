@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.dodolz.kiddos.kidsapp">
+
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.ForgotPasswordActivity"
+            android:theme="@style/AppThemeLittleBitDarker"/>
+        <activity
+            android:name=".activity.KidsVerificationActivity"
+            android:theme="@style/AppThemeLittleBitDarker" />
+        <activity android:name=".activity.EditProfileActivity"
+            android:theme="@style/AppThemeLittleBitDarker"/>
+        <activity android:name=".BlockActivity"
+            android:theme="@style/AppThemeLittleBitDarker"/>
+
+        <service
+            android:name=".service.MainForegroundService"
+            android:enabled="true"
+            android:foregroundServiceType="mediaProjection|dataSync" />
+
+        <activity
+            android:name=".activity.SignupActivity"
+            android:theme="@style/AppThemeLittleBitDarker" />
+        <activity
+            android:name=".activity.EmailVerificationActivity"
+            android:theme="@style/AppThemeLittleBitDarker" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:theme="@style/AppThemeLittleBitDarker" />
+        <activity
+            android:name=".activity.SplashScreenActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".HomeActivity"
+            android:theme="@style/AppTheme" />
+    </application>
+
+</manifest>

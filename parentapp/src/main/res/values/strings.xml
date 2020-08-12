@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">Kiddos</string>
+    <string name="title_home">Beranda</string>
+    <string name="title_app_detail">"Detail App"</string>
+    <string name="title_video">Video</string>
+    <string name="title_setting">Pengaturan</string>
+    <string name="title_location">Lokasi</string>
+    <string name="add_child_title">Add child</string>
+    <string name="menu_title">Menu</string>
+    <string name="ubah_profil">Ubah Profil</string>
+    <string name="selamat_pagi">Selamat Pagi</string>
+    <string name="splash_logo">Splash Logo</string>
+    <string name="selamat_datang">Selamat Datang!</string>
+    <string name="silakan_masuk_ke_akun_anda">Silakan masuk ke akun Anda</string>
+    <string name="alamat_email">Alamat Email</string>
+    <string name="kata_sandi">Kata Sandi</string>
+    <string name="lupa_kata_sandi">Lupa kata sandi?</string>
+    <string name="masuk">Masuk</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoia2lkZG9zdGEiLCJhIjoiY2tjMzhrMzVsMDl0aDJ2cDNyNHB2aXk1ZCJ9.jsFKSTK8sflOBy4Cf-V1Ig</string>
+    <string name="belum_punya_akun">Belum punya akun?</string>
+    <string name="daftar">Daftar</string>
+    <string name="daftar_sekarang">Daftar Sebagai Orang Tua</string>
+    <string name="sudah_punya_akun">Sudah punya akun?</string>
+    <string name="ulangi_kata_sandi">Ulangi Kata Sandi</string>
+    <string name="nama_lengkap">Nama Lengkap</string>
+    <string name="tombol_kembali">Tombol Kembali</string>
+    <string name="status">Status</string>
+    <string name="orang_tua">Orang Tua</string>
+    <string name="anak">Anak</string>
+    <string name="proses_masuk">Proses masuk…</string>
+    <string name="proses_daftar">Proses Daftar…</string>
+    <string name="keluar">Keluar</string>
+    <string name="email_verifikasi_sudah_terkirim">Email verifikasi sudah terkirim ke</string>
+    <string name="green_chacklist_image">Green chacklist image</string>
+    <string name="sedang_memverifikasi">Menunggu verifikasi email…</string>
+    <string name="aplikasi_paling_lama_diakses">Aplikasi Paling Lama Diakses</string>
+    <string name="penggunaan_smartphone_hari_ini">Penggunaan Smartphone Hari Ini</string>
+    <string name="riwayat_akses_aplikasi">Riwayat Akses Aplikasi</string>
+    <string name="lihat_semua">Lihat Semua</string>
+    <string name="penggunaan_internet_hari_ini">Penggunaan Internet Hari Ini</string>
+    <string name="diakses_pada">Diakses </string>
+    <string name="belum_ada_anak">Belum ada anak yang ditambahkan. Silakan tambahkan anak terlebih dahulu</string>
+    <string name="sedang_memuat_data">Sedang memuat data</string>
+    <string name="tambah_anak">Tambah Anak</string>
+    <string name="masukkan_email_anak_yang_ingin_dipantau">Masukkan email anak yang \ningin dipantau</string>
+    <string name="tambahkan">Tambahkan</string>
+    <string name="menambahkan_anak">Menambahkan Anak…</string>
+    <string name="verifikasi_penambahan_anak">Verifikasi Penambahan \nAnak</string>
+    <string name="kode_unik">Kode Unik</string>
+    <string name="buka_aplikasi_kiddos_pada_smartphone_anak">Buka aplikasi Kiddos pada smartphone Anak</string>
+    <string name="masukkan_kode_unik_yang_tertera_pada_form_berikut">Masukkan 6 digit Kode Unik yang muncul ke pada form berikut ini</string>
+    <string name="klik_tombol_menu_di_pojok_kiri_atas_layar_beranda_anak">Klik tombol Menu di pojok kiri atas layar Beranda Anak</string>
+    <string name="klik_kode_unik_penambahan_anak">Klik \'\'Kode Unik Penambahan Anak\'\'</string>
+    <string name="verifikasi">Verifikasi</string>
+    <string name="durasi_perekaman">Durasi perekaman</string>
+    <string name="aktif">Aktif</string>
+    <string name="non_aktif">Non-Aktif</string>
+    <string name="durasi_dibatasi">Durasi Dibatasi</string>
+    <string name="direkam_pada">Direkam Pada</string>
+    <string name="urutkan">Urutkan</string>
+    <string name="aplikasi">Aplikasi</string>
+    <string name="durasi">Durasi</string>
+    <string name="alamat_lokasi">Alamat Lokasi:</string>
+    <string name="ganti_kata_sandi">Ganti Kata Sandi</string>
+    <string name="simpan">Simpan</string>
+    <string name="batal">Batal</string>
+    <string name="tampilkan_kata_sandi">Tampilkan Kata Sandi</string>
+    <string name="mohon_tunggu">Mohon Tunggu</string>
+    <string name="kata_sandi_sekarang">Kata Sandi Sekarang</string>
+    <string name="kata_sandi_baru">Kata Sandi Baru</string>
+    <string name="ulangi_kata_sandi_baru">Ulangi Kata Sandi Baru</string>
+    <string name="kirim">Kirim</string>
+    <string name="pesan_lupa_kata_sandi">Masukkan email yang terdaftar. Kami akan mengirimkan email untuk atur ulang kata sandi Anda</string>
+    <string name="lokasi_anak_belum_tersedia">Lokasi anak belum tersedia</string>
+    <string name="video_perekaman_layar_belum_tersedia">Video perekaman layar belum tersedia</string>
+    <string-array name="setting_spinner_options">
+        <item>Perekaman Layar</item>
+        <item>Pembatasan Aplikasi</item>
+        <item>Blokir Aplikasi</item>
+    </string-array>
+
+</resources>
