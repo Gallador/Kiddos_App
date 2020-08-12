@@ -291,15 +291,14 @@ class MainForegroundService : Service() {
             mMediaRecorder = MediaRecorder()
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE)
             mMediaRecorder.setOutputFormat(2) // For MPEG_4
-            if (Build.VERSION.SDK_INT >= 26) {
+            /*if (Build.VERSION.SDK_INT >= 26) {
                 mMediaRecorder.setVideoEncoder(5)
-            } else {
+            } else {*/
                 try {
                     mMediaRecorder.setVideoEncoder(5) // For HEVC Encoder
                 } catch (ex: IllegalArgumentException) {
                     mMediaRecorder.setVideoEncoder(0) // back to default
                 }
-            }
             
             mMediaRecorder.setOutputFile(videoFilePath)
             mMediaRecorder.setVideoSize(480, 854)
