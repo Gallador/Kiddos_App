@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -22,15 +21,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.ForgotPasswordActivity"
-            android:theme="@style/AppThemeLittleBitDarker"/>
+        <activity android:name=".LimitUsageActivity"></activity>
+        <activity
+            android:name=".activity.ForgotPasswordActivity"
+            android:theme="@style/AppThemeLittleBitDarker" />
         <activity
             android:name=".activity.KidsVerificationActivity"
             android:theme="@style/AppThemeLittleBitDarker" />
-        <activity android:name=".activity.EditProfileActivity"
-            android:theme="@style/AppThemeLittleBitDarker"/>
-        <activity android:name=".BlockActivity"
-            android:theme="@style/AppThemeLittleBitDarker"/>
+        <activity
+            android:name=".activity.EditProfileActivity"
+            android:theme="@style/AppThemeLittleBitDarker" />
+        <activity
+            android:name=".BlockActivity"
+            android:theme="@style/AppThemeLittleBitDarker" />
 
         <service
             android:name=".service.MainForegroundService"

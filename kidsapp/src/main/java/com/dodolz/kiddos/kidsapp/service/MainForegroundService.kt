@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.dodolz.kiddos.kidsapp.service
 
 import android.annotation.SuppressLint
@@ -31,6 +32,7 @@ import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.ONGOING_NOTIFICATION_ID
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.SUB_ID
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.USER_EMAIL
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.VIRTUAL_DISPLAY_NAME
+import com.dodolz.kiddos.kidsapp.LimitUsageActivity
 import com.dodolz.kiddos.kidsapp.R
 import com.dodolz.kiddos.kidsapp.model.AppInfo
 import com.dodolz.kiddos.kidsapp.model.AppInfoForRestrict
@@ -181,8 +183,13 @@ class MainForegroundService : Service() {
                             applicationContext.startActivity(intentToBlockActivity)
                         }
                         activeRestrictMap[lastApp] != null -> {
-                            val durasi = activeRestrictMap[lastApp]?.durasiPembatasan
-                            TODO("Check usage time for the app")
+                            val durasiPembatasan = activeRestrictMap[lastApp]?.durasiPembatasan?.toLong()
+                            val packageName = activeRestrictMap[lastApp]?.namaPaketAplikasi
+                            if (durasiPembatasan != null && packageName != null) {
+                                if (getUsageDuration(packageName) >= durasiPembatasan * 3600000L) {
+                                    applicationContext.startActivity(Intent(applicationContext, LimitUsageActivity::class.java))
+                                }
+                            }
                         }
                         activeRecordMap[lastApp] != null -> {
                             if (!isBusyRecording) {
@@ -200,7 +207,46 @@ class MainForegroundService : Service() {
         }
         return START_STICKY
     }
-    
+
+    private fun getUsageDuration(packageName: String): Long {
+        val todayDate = GregorianCalendar()
+        todayDate.run {
+            timeZone = TimeZone.getTimeZone("Asia/Jakarta")
+            set(GregorianCalendar.HOUR_OF_DAY, 0)
+            set(GregorianCalendar.MINUTE, 0)
+            set(GregorianCalendar.SECOND, 1)
+            set(GregorianCalendar.MILLISECOND, 0)
+        }
+        val currentTime = System.currentTimeMillis()
+        val mUsageStatsManager =
+            applicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val usageEvents = mUsageStatsManager.queryEvents(todayDate.timeInMillis, currentTime)
+        val allEvents: ArrayList<UsageEvents.Event> = arrayListOf()
+        var durasiPenggunaan = 0L
+        usageEvents.run {
+            while (this.hasNextEvent()) {
+                val event = UsageEvents.Event()
+                this.getNextEvent(event)
+                val isForegroundOrBackgroundEvent =
+                    event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND ||
+                            event.eventType == UsageEvents.Event.MOVE_TO_BACKGROUND
+                if (isForegroundOrBackgroundEvent && event.packageName == packageName) {
+                    allEvents.add(event)
+                }
+            }
+        }
+        for (i in 0 until (allEvents.size - 1)) {
+            val currentEvent = allEvents[i]
+            val nextEvent = allEvents[i + 1]
+            if (currentEvent.eventType == 1 && nextEvent.eventType == 2 &&
+                (currentEvent.className == nextEvent.className)
+            ) {
+                durasiPenggunaan += nextEvent.timeStamp - currentEvent.timeStamp
+            }
+        }
+        return durasiPenggunaan
+    }
+
     @SuppressLint("MissingPermission")
     fun getLocation(email: String) {
         val locationManager: LocationManager? = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -291,14 +337,11 @@ class MainForegroundService : Service() {
             mMediaRecorder = MediaRecorder()
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE)
             mMediaRecorder.setOutputFormat(2) // For MPEG_4
-            /*if (Build.VERSION.SDK_INT >= 26) {
-                mMediaRecorder.setVideoEncoder(5)
-            } else {*/
-                try {
-                    mMediaRecorder.setVideoEncoder(5) // For HEVC Encoder
-                } catch (ex: IllegalArgumentException) {
-                    mMediaRecorder.setVideoEncoder(0) // back to default
-                }
+            try {
+                mMediaRecorder.setVideoEncoder(5) // For HEVC Encoder
+            } catch (ex: IllegalArgumentException) {
+                mMediaRecorder.setVideoEncoder(0) // back to default
+            }
             
             mMediaRecorder.setOutputFile(videoFilePath)
             mMediaRecorder.setVideoSize(480, 854)
@@ -329,7 +372,7 @@ class MainForegroundService : Service() {
         folderFileName: String
     ) {
         if (isBusyRecording) {
-                delay((duration.toLong() * 60_000L) + 1_000L)
+                delay((duration.toLong() * 5_000L) + 1_000L)
                 // Stop screen recording
                 mVirtualDisplay?.release()
                 mVirtualDisplay = null
@@ -342,9 +385,6 @@ class MainForegroundService : Service() {
                 while (!isFileReady) {
                     if (File(videoFilePath).exists()) {
                         sendVideoToStorage(videoFilePath, folderFileName)
-                        /*withContext(Dispatchers.IO) {
-                        sendVideoToStorage(videoFilePath, folderFileName)
-                    }*/
                         isFileReady = true
                     }
                 }

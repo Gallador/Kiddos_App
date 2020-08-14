@@ -24,7 +24,7 @@
     <style name="ContentTitle" parent="@android:style/TextAppearance">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/circular_std_medium</item>
+        <item name="android:fontFamily">@font/public_sans_medium</item>
         <item name="android:textColor">@color/colorFontDark</item>
         <item name="android:textSize">16sp</item>
     </style>

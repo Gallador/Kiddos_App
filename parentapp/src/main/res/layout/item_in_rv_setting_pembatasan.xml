@@ -23,7 +23,7 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:fontFamily="@font/circular_std_book"
+        android:fontFamily="@font/public_sans_reg"
         android:textColor="@color/colorFontDark"
         android:textSize="14sp"
         android:ellipsize="end"

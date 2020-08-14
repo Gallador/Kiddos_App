@@ -35,7 +35,7 @@
                 android:id="@+id/txt_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/circular_std_medium"
+                android:fontFamily="@font/public_sans_medium"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp"/>
         </androidx.appcompat.widget.Toolbar>
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
-            android:fontFamily="@font/circular_std_medium"
+            android:fontFamily="@font/public_sans_medium"
             android:lineSpacingExtra="16.5dp"
             android:textAlignment="center"
             android:text="@string/sedang_memuat_data"

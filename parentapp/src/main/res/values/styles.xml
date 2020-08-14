@@ -35,7 +35,7 @@
     <style name="ContentTitle" parent="@android:style/TextAppearance">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/circular_std_medium</item>
+        <item name="android:fontFamily">@font/public_sans_medium</item>
         <item name="android:textColor">@color/colorFontDark</item>
         <item name="android:textSize">16sp</item>
     </style>
@@ -48,12 +48,12 @@
     </style>
 
     <style name="BottomNavigationViewTextStyle.InActive" parent="Widget.Design.BottomNavigationView">
-        <item name="android:fontFamily">@font/circular_std_medium</item>
+        <item name="android:fontFamily">@font/public_sans_medium</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="BottomNavigationViewTextStyle.InNonActive" parent="Widget.Design.BottomNavigationView">
-        <item name="android:fontFamily">@font/circular_std_book</item>
+        <item name="android:fontFamily">@font/public_sans_reg</item>
         <item name="android:textSize">12sp</item>
     </style>
 

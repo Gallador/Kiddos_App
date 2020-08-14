@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BlockActivity">
+    tools:context=".LimitUsageActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/public_sans_bold"
-        android:text="Aplikasi ini telah diblokir aksesnya oleh Orang tua"
+        android:text="Aplikasi ini telah melewati batas penggunaan maksimum dalam 1 hari"
         android:textColor="@color/colorPrimaryDark"
         android:textAlignment="center"
         android:lineSpacingExtra="11sp"

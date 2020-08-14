@@ -13,6 +13,7 @@
         android:id="@+id/img_profilePic"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:src="@drawable/ic_round_account_circle_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
