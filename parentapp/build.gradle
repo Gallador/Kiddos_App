@@ -56,7 +56,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     // Mapbox
-    implementation project(':mapbox-android-sdk-9.3.0')
+    //implementation project(':mapbox-android-sdk-9.3.0')
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v9:0.4.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v9:0.12.0'
 

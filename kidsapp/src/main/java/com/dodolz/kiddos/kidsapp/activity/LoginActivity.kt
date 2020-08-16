@@ -26,12 +26,27 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
         }
+        viewmodel.userIsNotKid.observe(this) { showUserIsNotKid(it) }
         viewmodel.loginFailedException.observe(this) { showCauseOfLoginFailure(it) }
         btn_masuk.setOnClickListener(this)
         lbl_daftar.setOnClickListener(this)
         lbl_lupaKataSandi.setOnClickListener(this)
     }
-    
+
+    private fun showUserIsNotKid(userIsNotKid: Boolean) {
+        if (userIsNotKid) {
+            edt_email.text.clear()
+            edt_email.requestFocus()
+            edt_kataSandi.text.clear()
+            container.visibility = View.VISIBLE
+            Toast.makeText(
+                this,
+                this.resources.getString(R.string.pengguna_bukan_anak),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     private fun showCauseOfLoginFailure(exception: Exception) {
         edt_email.text.clear()
         edt_email.requestFocus()

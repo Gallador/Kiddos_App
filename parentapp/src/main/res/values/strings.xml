@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kiddos</string>
+    <string name="app_name">Kiddos Parent</string>
     <string name="title_home">Beranda</string>
     <string name="title_app_detail">"Detail App"</string>
     <string name="title_video">Video</string>
@@ -73,6 +73,7 @@
     <string name="pesan_lupa_kata_sandi">Masukkan email yang terdaftar. Kami akan mengirimkan email untuk atur ulang kata sandi Anda</string>
     <string name="lokasi_anak_belum_tersedia">Lokasi anak belum tersedia</string>
     <string name="video_perekaman_layar_belum_tersedia">Video perekaman layar belum tersedia</string>
+    <string name="pengguna_bukan_orangtua">Pengguna bukan berstatus orang tua. Silakan masuk dengan akun berstatus orang tua</string>
     <string-array name="setting_spinner_options">
         <item>Perekaman Layar</item>
         <item>Pembatasan Aplikasi</item>

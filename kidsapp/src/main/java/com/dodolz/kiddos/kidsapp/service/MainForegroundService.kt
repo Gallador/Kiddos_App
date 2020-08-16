@@ -24,7 +24,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.dodolz.kiddos.kidsapp.BlockActivity
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.MEDIA_PROJECTION_DATA
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.MEDIA_PROJECTION_RESULT_CODE
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.NOTIFICATION_CHANNEL_ID
@@ -32,8 +31,9 @@ import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.ONGOING_NOTIFICATION_ID
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.SUB_ID
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.USER_EMAIL
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.VIRTUAL_DISPLAY_NAME
-import com.dodolz.kiddos.kidsapp.LimitUsageActivity
 import com.dodolz.kiddos.kidsapp.R
+import com.dodolz.kiddos.kidsapp.activity.BlockActivity
+import com.dodolz.kiddos.kidsapp.activity.LimitUsageActivity
 import com.dodolz.kiddos.kidsapp.model.AppInfo
 import com.dodolz.kiddos.kidsapp.model.AppInfoForRestrict
 import com.dodolz.kiddos.kidsapp.repository.MainRepository
