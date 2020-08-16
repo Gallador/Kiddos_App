@@ -78,4 +78,5 @@
         <item>Blokir Aplikasi</item>
     </string-array>
     <string name="permission">Seluruh izin dibutuhkan untuk dapat menjalankan aplikasi</string>
+    <string name="pengguna_bukan_anak">Pengguna bukan berstatus anak. Silakan masuk dengan akun berstatus anak</string>
 </resources>

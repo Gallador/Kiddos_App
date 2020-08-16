@@ -59,7 +59,6 @@ class HomeActivity : AppCompatActivity() {
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
-    //private val ALL_PERMISSION = 124
     
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,7 +134,7 @@ class HomeActivity : AppCompatActivity() {
                 startActivityForResult(screenCaptureIntent, SCREEN_RECORD_REQUEST_CODE)
             } else {
                 MaterialDialog(this).show {
-                    title(text = "Izin Akses Perangkat")
+                    title(text = "Izin Riwayat Penggunaan Perangkat")
                     message(text = "Izinkan Aplikasi untuk mengakses riwayat penggunaan perangkat untuk menggunakan aplikasi")
                     positiveButton(text = "Lanjutkan") {
                         startActivityForResult(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS), USAGE_PERMS_REQUEST_CODE)

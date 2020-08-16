@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kiddos</string>
+    <string name="app_name">Kiddos Parent</string>
     <string name="title_home">Beranda</string>
     <string name="title_app_detail">"Detail App"</string>
     <string name="title_video">Video</string>

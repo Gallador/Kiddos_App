@@ -1,7 +1,8 @@
-package com.dodolz.kiddos.kidsapp
+package com.dodolz.kiddos.kidsapp.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.dodolz.kiddos.kidsapp.R
 
 class LimitUsageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

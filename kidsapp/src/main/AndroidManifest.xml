@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LimitUsageActivity"></activity>
+        <activity android:name=".activity.LimitUsageActivity"></activity>
         <activity
             android:name=".activity.ForgotPasswordActivity"
             android:theme="@style/AppThemeLittleBitDarker" />
@@ -32,7 +32,7 @@
             android:name=".activity.EditProfileActivity"
             android:theme="@style/AppThemeLittleBitDarker" />
         <activity
-            android:name=".BlockActivity"
+            android:name=".activity.BlockActivity"
             android:theme="@style/AppThemeLittleBitDarker" />
 
         <service
