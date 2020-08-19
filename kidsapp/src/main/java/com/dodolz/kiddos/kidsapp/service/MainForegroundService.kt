@@ -23,6 +23,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.MEDIA_PROJECTION_DATA
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.MEDIA_PROJECTION_RESULT_CODE
@@ -188,6 +189,13 @@ class MainForegroundService : Service() {
                             if (durasiPembatasan != null && packageName != null) {
                                 if (getUsageDuration(packageName) >= durasiPembatasan * 3600000L) {
                                     applicationContext.startActivity(Intent(applicationContext, LimitUsageActivity::class.java))
+                                } else if (activeRecordMap[lastApp] != null) {
+                                    if (!isBusyRecording) {
+                                        val appName = activeRecordMap[lastApp]?.namaAplikasi
+                                        appName?.also {
+                                            startRecordScreen(intent, it, recordDuration, this)
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -257,8 +265,8 @@ class MainForegroundService : Service() {
                 override fun onLocationChanged(location: Location?) {
                     location?.also { it ->
                         mainRepository.sendLocation(it.latitude, it.longitude, email)
-                        locationManager?.removeUpdates(this)
                     }
+                    locationManager?.removeUpdates(this)
                 }
                 override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
                 override fun onProviderEnabled(p0: String?) {}
@@ -338,7 +346,8 @@ class MainForegroundService : Service() {
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE)
             mMediaRecorder.setOutputFormat(2) // For MPEG_4
             try {
-                mMediaRecorder.setVideoEncoder(5) // For HEVC Encoder
+                mMediaRecorder.setVideoEncoder(2)
+                Log.d("H264", "CHOOSED")// For H264 Encoder, for HEVC Encoder set it to 5
             } catch (ex: IllegalArgumentException) {
                 mMediaRecorder.setVideoEncoder(0) // back to default
             }

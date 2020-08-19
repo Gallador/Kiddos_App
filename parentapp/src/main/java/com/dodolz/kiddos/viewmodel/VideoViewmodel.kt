@@ -93,8 +93,8 @@ class VideoViewmodel(private val app: Application): AndroidViewModel(app) {
     fun postRequestForVideo(userID: String, data: SubItem, childEmail: String)
         = viewModelScope.launch(Dispatchers.IO) {
         val videoFilePath = "${app.filesDir.absoluteFile}/videos/$childEmail"
-        val reqID = "${userID}_${data.prefixName.filterNot{ a -> a == ':'}}"
-        Log.d("REQID", reqID+ "-" + data.prefixPath.drop(1))
+        val reqID = "${userID}_${childEmail.filterNot { a -> a == '.' }}_${data.prefixName.filterNot{ a -> a == ':'}}"
+        Log.d("REQID", reqID+ " - " + data.prefixPath.drop(1))
         if (!File(videoFilePath).exists()) File(videoFilePath).mkdirs()
         val specificVideoPath = "$videoFilePath/$reqID"
         if (File("$specificVideoPath/$reqID.mp4").exists()) {
