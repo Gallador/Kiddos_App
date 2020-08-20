@@ -70,34 +70,42 @@ class SettingFragment : Fragment() {
         subscribeRestrictObservers()
         subscribeBlockObservers()
         childSelectionStateViewmodel.childSelected.observe(viewLifecycleOwner, Observer {
-            // Set tampilan setting ke Perekaman Layar
+            // Set tampilan setting ke Perekaman Layar setelah berganti anak
             showRelatedSettingView(0, it)
+            loadingDialog.show()
             // Set Pilihan Setting Spinner
             txt_spinnerSetting.apply {
                 setAdapter(settingChoicesAdapter)
                 setText(settingChoices[0], false)
-                onItemClickListener = object: AdapterView.OnItemClickListener {
-                    override fun onItemClick(p0: AdapterView<*>?, p1: View?, itemIndex: Int, p3: Long) {
-                        showRelatedSettingView(itemIndex, it)
-                    }
+                onItemClickListener = AdapterView.OnItemClickListener { _, _, itemIndex, _ ->
+                    showRelatedSettingView(itemIndex, it)
                 }
             }
         })
+        viewmodel.isUserRefreshing.observe(viewLifecycleOwner, Observer {
+            if (it.first) refreshData(it.second)
+        })
     }
-    
+
+    private fun refreshData(childEmail: String) {
+        when (txt_spinnerSetting.text.toString()) {
+            settingChoices[0] -> viewmodel.loadAppListForRecord(childEmail)
+            settingChoices[1] -> viewmodel.loadAppListForRestrict(childEmail)
+            settingChoices[2] -> viewmodel.loadAppListForBlock(childEmail)
+        }
+    }
+
     private fun showRelatedSettingView(itemIndex: Int, childEmail: String = "") {
         when (itemIndex) {
             0 -> {
                 view_perekamanLayar.visibility = View.VISIBLE; view_pembatasanAplikasi.visibility = View.INVISIBLE; view_blokirAplikasi.visibility = View.INVISIBLE
-                loadingDialog.show()
                 viewmodel.loadAppListForRecord(childEmail)
                 // Set adapter for Pilihan durasi screen record
                 txt_pilihanDurasi.setAdapter(recordDurationChoicesAdapter)
-                txt_pilihanDurasi.onItemClickListener = object: AdapterView.OnItemClickListener {
-                    override fun onItemClick(p0: AdapterView<*>?, p1: View?, itemIndex: Int, p3: Long) {
-                        setRecordDuration(itemIndex + 1, childEmail)
+                txt_pilihanDurasi.onItemClickListener =
+                    AdapterView.OnItemClickListener { _, _, itemIndex2, _ ->
+                        setRecordDuration(itemIndex2 + 1, childEmail)
                     }
-                }
             }
             1 -> {
                 view_pembatasanAplikasi.visibility = View.VISIBLE; view_perekamanLayar.visibility = View.INVISIBLE;  view_blokirAplikasi.visibility = View.INVISIBLE
@@ -115,7 +123,6 @@ class SettingFragment : Fragment() {
             txt_pilihanDurasi.setText(recordDurationChoices[recordDuration - 1], false)
         })
         viewmodel.activeRecordList.observe(viewLifecycleOwner, Observer {
-            loadingDialog.dismiss()
             val childEmail = it.first
             val activeAppList = it.second
             activeRecordAdapter =
@@ -133,6 +140,7 @@ class SettingFragment : Fragment() {
                 rv_aktifPerekaman.adapter = this
                 setData(activeAppList)
             }
+            loadingDialog.dismiss()
         })
         viewmodel.nonActiveRecordList.observe(viewLifecycleOwner, Observer {
             val childEmail = it.first
@@ -180,6 +188,7 @@ class SettingFragment : Fragment() {
                 rv_aktifPembatasan.adapter = this
                 setData(activeAppList)
             }
+            loadingDialog.dismiss()
         })
         viewmodel.nonActiveRestrictList.observe(viewLifecycleOwner, Observer {
             val childEmail = it.first
@@ -204,7 +213,6 @@ class SettingFragment : Fragment() {
     
     private fun subscribeBlockObservers() {
         viewmodel.activeBlockList.observe(viewLifecycleOwner, Observer {
-            loadingDialog.dismiss()
             val childEmail = it.first
             val activeAppList = it.second
             activeBlockAdapter =
@@ -222,6 +230,7 @@ class SettingFragment : Fragment() {
                 rv_aktifBlokir.adapter = this
                 setData(activeAppList)
             }
+            loadingDialog.dismiss()
         })
         viewmodel.nonActiveBlockList.observe(viewLifecycleOwner, Observer {
             val childEmail = it.first

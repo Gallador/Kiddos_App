@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var homeViewmodel: HomeViewmodel
+    private lateinit var appDetailViewmodel: AppDetailViewmodel
+    private lateinit var videoViewmodel: VideoViewmodel
+    private lateinit var settingViewmodel: SettingViewmodel
+    private lateinit var locationViewmodel: LocationViewmodel
     // This viewmodel will be subscribed by all fragment in bottom nav view
     private lateinit var childSelectionStateViewmodel: ChildSelectionStateViewmodel
     
@@ -85,9 +89,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         FirebaseAuth.getInstance().currentUser?.let {
             homeViewmodel = ViewModelProvider(this, viewModelFactory { HomeViewmodel(it) })
                 .get(HomeViewmodel::class.java)
-            ViewModelProvider(this@MainActivity).get(AppDetailViewmodel::class.java)
-            ViewModelProvider(this@MainActivity).get(VideoViewmodel::class.java)
-            ViewModelProvider(this@MainActivity).get(SettingViewmodel::class.java)
+            appDetailViewmodel = ViewModelProvider(this@MainActivity).get(AppDetailViewmodel::class.java)
+            videoViewmodel = ViewModelProvider(this@MainActivity).get(VideoViewmodel::class.java)
+            settingViewmodel = ViewModelProvider(this@MainActivity).get(SettingViewmodel::class.java)
+            locationViewmodel = ViewModelProvider(this@MainActivity).get(LocationViewmodel::class.java)
             val headerView = side_nav_view.getHeaderView(0)
             headerView.txt_email.text = it.email.toString()
             headerView.txt_name.text = it.displayName.toString()
@@ -121,8 +126,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             finishAfterTransition()
             true
         }
+        swipeContainer.setOnRefreshListener {
+            val currentChild = tab_child_selector.getTabAt(tab_child_selector.selectedTabPosition)?.tag
+            currentChild?.let { refreshData(it.toString()) }
+        }
+        swipeContainer.setColorSchemeResources(R.color.colorAccent, R.color.colorGray)
     }
-    
+
     override fun onStart() {
         super.onStart()
         progressbar.visibility = View.VISIBLE
@@ -172,6 +182,19 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             R.id.nav_app_detail -> txt_title.text = this.resources.getString(R.string.title_app_detail)
             R.id.nav_video -> txt_title.text = this.resources.getString(R.string.title_video)
             R.id.nav_setting -> txt_title.text = this.resources.getString(R.string.title_setting)
+            R.id.nav_location -> txt_title.text = this.resources.getString(R.string.title_location)
+        }
+    }
+
+    private fun refreshData(currentChild: String) {
+        when (navController.currentDestination?.id) {
+            R.id.nav_home -> {
+                homeViewmodel.loadChildrenUsageSum(currentChild, true)
+                homeViewmodel.loadChildrenRecentApp(currentChild, true)
+            }
+            R.id.nav_app_detail -> appDetailViewmodel.loadDetailApps(currentChild, true)
+            R.id.nav_video -> videoViewmodel.loadListOfVideos(currentChild, true)
+            R.id.nav_setting -> settingViewmodel.refreshSetting(currentChild)
             R.id.nav_location -> txt_title.text = this.resources.getString(R.string.title_location)
         }
     }

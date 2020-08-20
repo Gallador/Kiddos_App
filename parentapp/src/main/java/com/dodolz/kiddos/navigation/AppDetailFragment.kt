@@ -15,6 +15,7 @@ import com.dodolz.kiddos.R
 import com.dodolz.kiddos.adapter.detail.DetailAppAdapter
 import com.dodolz.kiddos.viewmodel.AppDetailViewmodel
 import com.dodolz.kiddos.viewmodel.ChildSelectionStateViewmodel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 
@@ -63,6 +64,7 @@ class AppDetailFragment : Fragment() {
             rv_detailApps.adapter = recycleviewAdapter
             recycleviewAdapter.setData(list)
             loadingDialog.dismiss()
+            requireActivity().swipeContainer.isRefreshing = false
         })
         viewmodel.changeDetailApps.observe(viewLifecycleOwner, Observer {
             recycleviewAdapter.setData(it.second)

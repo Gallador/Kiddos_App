@@ -71,8 +71,8 @@ class HomeViewmodel(private val user: FirebaseUser): ViewModel() {
         }
     }
     
-    fun loadChildrenUsageSum(childEmail: String) = viewModelScope.launch(Dispatchers.IO) {
-        if (mapOfChildrenUsageSum[childEmail] == null) {
+    fun loadChildrenUsageSum(childEmail: String, forceLoad: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
+        if (mapOfChildrenUsageSum[childEmail] == null || forceLoad) {
             Log.d("loadChildrenUsageSum", "Get data from internet")
             val childDocument = db.collection("User").document(childEmail)
             childDocument.get().addOnSuccessListener { documentSnapshot ->
@@ -87,14 +87,14 @@ class HomeViewmodel(private val user: FirebaseUser): ViewModel() {
         }
     }
     
-    fun loadChildrenRecentApp(childEmail: String) = viewModelScope.launch(Dispatchers.IO) {
-        if (mapOfChildrenRecentApps[childEmail] == null) {
+    fun loadChildrenRecentApp(childEmail: String, forceLoad: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
+        if (mapOfChildrenRecentApps[childEmail] == null || forceLoad) {
             Log.d("loadRecentApp", "Get data from internet")
             val result: ArrayList<RecentApp> = arrayListOf()
             val childDocument = db.collection("User").document(childEmail).collection("Riwayat Akses Aplikasi")
             childDocument
                 .orderBy("waktuAkses", Query.Direction.DESCENDING)
-                .limit(10L)
+                .limit(15L)
                 .get()
                 .addOnCompleteListener { task ->
                     task.result?.let {
@@ -109,6 +109,14 @@ class HomeViewmodel(private val user: FirebaseUser): ViewModel() {
         } else {
             Log.d("loadChildrenInfo", "Already there")
             _recentApps.postValue(Pair(childEmail, mapOfChildrenRecentApps[childEmail]))
+        }
+    }
+
+    fun forceLoad(childEmail: String) = viewModelScope.launch(Dispatchers.IO)  {
+        val latestTimestamp = mapOfChildrenUsageSum[childEmail]?.timestampPemutakhiranData
+        if (latestTimestamp != null) {
+            val childDocument = db.collection("User").document(childEmail)
+
         }
     }
 }

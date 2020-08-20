@@ -20,6 +20,7 @@ import com.dodolz.kiddos.model.video.SubItem
 import com.dodolz.kiddos.viewmodel.ChildSelectionStateViewmodel
 import com.dodolz.kiddos.viewmodel.VideoViewmodel
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_video.*
 import kotlinx.android.synthetic.main.fragment_video.view.*
 import java.io.File
@@ -64,12 +65,11 @@ class VideoFragment : Fragment() {
             .icon(R.drawable.ic_loading)
         
         childSelectionStateViewmodel.childSelected.observe(viewLifecycleOwner, Observer { childEmail ->
-            viewmodel.getListOfVideos(childEmail)
+            viewmodel.loadListOfVideos(childEmail)
             loadingDialog.show()
         })
         viewmodel.listOfVideo.observe(viewLifecycleOwner, Observer {
             txt_belumAdaVideo.visibility = View.INVISIBLE
-            loadingDialog.dismiss()
             val childEmail = it.first
             val videoList = it.second
             if (videoList.size == 0) {
@@ -82,6 +82,8 @@ class VideoFragment : Fragment() {
                 }
             })
             rv_mainItem.adapter = videoAdapter
+            loadingDialog.dismiss()
+            requireActivity().swipeContainer.isRefreshing = false
         })
         viewmodel.requestStatus.observe(viewLifecycleOwner, Observer {
             val childEmail = it.first

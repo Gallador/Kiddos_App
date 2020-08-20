@@ -20,6 +20,7 @@ import com.dodolz.kiddos.viewmodel.ChildSelectionStateViewmodel
 import com.dodolz.kiddos.viewmodel.HomeViewmodel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import java.util.concurrent.TimeUnit
@@ -90,7 +91,6 @@ class HomeFragment : Fragment() {
         data.totalPenggunaanInternet?.let {
             txt_penggunaanInternet.text = ConvertByte.getSize(it)
         }
-        
     }
     
     private fun updateRecentApp(data: Pair<String, ArrayList<RecentApp>?>) {
@@ -104,6 +104,6 @@ class HomeFragment : Fragment() {
             rv_recentApps.adapter = recycleviewAdapter
             recycleviewAdapter.setData(it)
         }
-        
+        requireActivity().swipeContainer.isRefreshing = false
     }
 }

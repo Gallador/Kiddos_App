@@ -30,7 +30,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.set
 
-
 @SuppressLint("SimpleDateFormat")
 class VideoViewmodel(private val app: Application): AndroidViewModel(app) {
     
@@ -61,8 +60,8 @@ class VideoViewmodel(private val app: Application): AndroidViewModel(app) {
     val videoPath: LiveData<String>
         get() = _videoPath
     
-    fun getListOfVideos(childEmail: String)= viewModelScope.launch(Dispatchers.IO) {
-        if (childrenVideoList[childEmail] == null) {
+    fun loadListOfVideos(childEmail: String, forceLoad: Boolean = false)= viewModelScope.launch(Dispatchers.IO) {
+        if (childrenVideoList[childEmail] == null || forceLoad) {
             val childVideoRef = storage.reference.child("$childEmail/video")
             val listOfItem: MutableList<MainItem> = mutableListOf()
             val getMainItem = childVideoRef.listAll()

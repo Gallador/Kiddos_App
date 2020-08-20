@@ -3,12 +3,15 @@ package com.dodolz.kiddos.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dodolz.kiddos.model.detail.DetailApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AppDetailViewmodel: ViewModel() {
     
@@ -27,8 +30,10 @@ class AppDetailViewmodel: ViewModel() {
     val changeDetailApps: LiveData<Pair<String, MutableList<DetailApp>>>
         get() = _changeDetailApps
     
-    fun loadDetailApps(childEmail: String) {
-        if (childrenDetailApp[childEmail] == null) {
+    fun loadDetailApps(childEmail: String, forceLoad: Boolean = false)
+            = viewModelScope.launch(Dispatchers.IO) {
+
+        if (childrenDetailApp[childEmail] == null || forceLoad) {
             val result: MutableList<DetailApp> = mutableListOf()
             db.collection("User").document(childEmail).collection("Detail Penggunaan")
                 .orderBy("durasiPenggunaan", Query.Direction.DESCENDING)

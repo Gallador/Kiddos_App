@@ -82,6 +82,11 @@ class SettingViewmodel: ViewModel() {
     /*private val _firebaseException: MutableLiveData<Exception> by lazy {
         MutableLiveData<Exception>()
     }*/
+    private val _isUserRefreshing: MutableLiveData<Pair<Boolean, String>> by lazy {
+        MutableLiveData<Pair<Boolean, String>>()
+    }
+    val isUserRefreshing: LiveData<Pair<Boolean, String>>
+        get() = _isUserRefreshing
     
     //Public LiveData for Perekaman Layar
     val activeRecordList: LiveData<Pair<String, MutableList<AppInfo>>>
@@ -120,7 +125,7 @@ class SettingViewmodel: ViewModel() {
         get() = _deactivateBlockStatus
     
     //Functions for Perekaman Layar
-    fun loadAppListForRecord(childEmail: String, force: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
+    fun loadAppListForRecord(childEmail: String, forceLoad: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
         val childDocument = db.collection("User").document(childEmail)
         fun loadNonActiveAppForRecord() {
             var nonActiveMap: Map<String, AppInfo>
@@ -165,9 +170,8 @@ class SettingViewmodel: ViewModel() {
                 }
                 .addOnFailureListener { }
         }
-        // Force terpenuhi ketika terjadi penambahan / pengurangan aplikasi yang diaktifkan screen recording
         when {
-            force -> { loadActiveAppForRecord() }
+            // Invoked when first time user access the Setting page or user swipe for refresh
             childrenActiveRecordList[childEmail] == null && childrenNonActiveRecordList[childEmail] == null -> {
                 val appListMap: MutableMap<String, AppInfo> = mutableMapOf()
                 childDocument.collection("Daftar Aplikasi").get()
@@ -179,6 +183,8 @@ class SettingViewmodel: ViewModel() {
                         loadActiveAppForRecord()
                     }
             }
+            // forceload terpenuhi ketika terjadi aktivasi/deaktivasi fitur screen recording pada salah satu app
+            forceLoad -> { loadActiveAppForRecord() }
             else -> {
                 val active = childrenActiveRecordList[childEmail]?.toMap()
                 val nonActive = childrenNonActiveRecordList[childEmail]?.toMap()
@@ -226,7 +232,7 @@ class SettingViewmodel: ViewModel() {
     }
     
     //Functions for Pembatasan Layar
-    fun loadAppListForRestrict(childEmail: String, force: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
+    fun loadAppListForRestrict(childEmail: String, forceLoad: Boolean = false) = viewModelScope.launch(Dispatchers.IO) {
         val childDocument = db.collection("User").document(childEmail)
         fun loadNonActiveAppForRestrict() {
             var nonActiveMap: Map<String, AppInfo>
@@ -260,7 +266,7 @@ class SettingViewmodel: ViewModel() {
                 }
                 .addOnFailureListener { }
         }
-        if ((childrenActiveRestrictList[childEmail] == null && childrenNonActiveRestrictList[childEmail] == null) || force) {
+        if ((childrenActiveRestrictList[childEmail] == null && childrenNonActiveRestrictList[childEmail] == null) || forceLoad) {
             loadActiveAppForRestrict()
         } else {
             val active = childrenActiveRestrictList[childEmail]?.toMap()
@@ -385,5 +391,24 @@ class SettingViewmodel: ViewModel() {
                     .set(hashMapOf("waktuDimutakhirkan" to System.currentTimeMillis()))
             }
             .addOnFailureListener { _deactivateBlockStatus.postValue(false) }
+    }
+
+    fun refreshSetting(childEmail: String) {
+        val childDocument = db.collection("User").document(childEmail)
+        val appListMap: MutableMap<String, AppInfo> = mutableMapOf()
+        childDocument.collection("Daftar Aplikasi").get()
+            .addOnSuccessListener {
+                for (doc in it) {
+                    appListMap[doc.get("namaPaketAplikasi").toString()] = doc.toObject()
+                }
+                childrenAppList[childEmail] = appListMap
+                childrenActiveRecordList.clear()
+                childrenNonActiveRecordList.clear()
+                childrenActiveRestrictList.clear()
+                childrenNonActiveRestrictList.clear()
+                childrenActiveBlockList.clear()
+                childrenNonActiveBlockList.clear()
+                _isUserRefreshing.postValue(Pair(true, childEmail))
+            }
     }
 }

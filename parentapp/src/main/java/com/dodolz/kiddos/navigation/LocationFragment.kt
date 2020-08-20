@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import com.afollestad.materialdialogs.MaterialDialog
 import com.dodolz.kiddos.R
 import com.dodolz.kiddos.viewmodel.ChildSelectionStateViewmodel
+import com.dodolz.kiddos.viewmodel.LocationViewmodel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.mapbox.api.geocoding.v5.GeocodingCriteria
@@ -32,10 +33,12 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("SimpleDateFormat", "SetTextI18n")
 class LocationFragment : Fragment() {
     
     private var markerViewManager: MarkerViewManager? = null
     private val childSelectionStateViewmodel: ChildSelectionStateViewmodel by activityViewModels()
+    private val viewmodel: LocationViewmodel by activityViewModels()
     private lateinit var loadingDialog: MaterialDialog
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +49,7 @@ class LocationFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_location, container, false)
     }
-    
-    @SuppressLint("SimpleDateFormat", "SetTextI18n")
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         map_View?.onCreate(savedInstanceState)
@@ -57,71 +59,78 @@ class LocationFragment : Fragment() {
             .icon(R.drawable.ic_loading)
         childSelectionStateViewmodel.childSelected.observe(viewLifecycleOwner, Observer { childEmail ->
             loadingDialog.show()
-            Firebase.firestore.collection("User").document(childEmail).collection("Lokasi")
-                .document("lokasi").get()
-                .addOnSuccessListener {
-                    if (it["lat"] != null && it["long"] != null && it["waktuDimutakhirkan"] != null
-                        && it["lat"].toString().isNotBlank() && it["long"].toString().isNotBlank()
-                        && it["waktuDimutakhirkan"].toString().isNotBlank()
-                    ) {
-                        val lat: Double = it["lat"].toString().toDouble()
-                        val long: Double = it["long"].toString().toDouble()
-                        val timestamp: Long = it["waktuDimutakhirkan"].toString().toLong()
-                        val sdf = SimpleDateFormat("HH:mm")
-                        val netDate = Date(timestamp)
-                        txt_waktuUpdate.text = "Dimutakhirkan ${sdf.format(netDate)} WIB"
-                        map_View?.getMapAsync { mapboxMap ->
-                            mapboxMap.setStyle(Style.OUTDOORS)
-                            mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), 14.0))
-                            val markerView = ImageView(context)
-                            markerView.layoutParams = LinearLayout.LayoutParams(100, 100)
-                            markerView.setImageResource(R.drawable.ic_location_24)
-                            markerViewManager = MarkerViewManager(map_View, mapboxMap)
-                            val marker = MarkerView(LatLng(lat, long), markerView)
-                            markerViewManager?.addMarker(marker)
-                            val reverseGeocode = MapboxGeocoding.builder()
-                                .accessToken(getString(R.string.mapbox_access_token))
-                                .query(Point.fromLngLat(long, lat))
-                                .geocodingTypes(GeocodingCriteria.TYPE_POI)
-                                .build()
-                            reverseGeocode.enqueueCall(object : Callback<GeocodingResponse> {
-                                @SuppressLint("SetTextI18n")
-                                override fun onResponse(
-                                    call: Call<GeocodingResponse>,
-                                    response: Response<GeocodingResponse>
-                                ) {
-                                    val results = response.body()!!.features()
-                                    if (results.size > 0) {
-                                        // Log the first results Point.
-                                        val firstResultPoint = results[0].placeName()
-                                        if (firstResultPoint != null)
-                                            txt_alamatLokasi.text = "Alamat Lokasi: $firstResultPoint"
-                                        else
-                                            txt_alamatLokasi.text = "Alamat Lokasi: Belum tersedia"
-                                    } else {
+            loadMaps(childEmail)
+        })
+        viewmodel.isUserRefreshing.observe(viewLifecycleOwner, Observer {
+            if (it.first) loadMaps(it.second)
+        })
+    }
+
+    private fun loadMaps(childEmail: String) {
+        Firebase.firestore.collection("User").document(childEmail).collection("Lokasi")
+            .document("lokasi").get()
+            .addOnSuccessListener {
+                if (it["lat"] != null && it["long"] != null && it["waktuDimutakhirkan"] != null
+                    && it["lat"].toString().isNotBlank() && it["long"].toString().isNotBlank()
+                    && it["waktuDimutakhirkan"].toString().isNotBlank()
+                ) {
+                    val lat: Double = it["lat"].toString().toDouble()
+                    val long: Double = it["long"].toString().toDouble()
+                    val timestamp: Long = it["waktuDimutakhirkan"].toString().toLong()
+                    val sdf = SimpleDateFormat("HH:mm")
+                    val netDate = Date(timestamp)
+                    txt_waktuUpdate.text = "Dimutakhirkan ${sdf.format(netDate)} WIB"
+                    map_View?.getMapAsync { mapboxMap ->
+                        mapboxMap.setStyle(Style.OUTDOORS)
+                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), 14.0))
+                        val markerView = ImageView(context)
+                        markerView.layoutParams = LinearLayout.LayoutParams(100, 100)
+                        markerView.setImageResource(R.drawable.ic_location_24)
+                        markerViewManager = MarkerViewManager(map_View, mapboxMap)
+                        val marker = MarkerView(LatLng(lat, long), markerView)
+                        markerViewManager?.addMarker(marker)
+                        val reverseGeocode = MapboxGeocoding.builder()
+                            .accessToken(getString(R.string.mapbox_access_token))
+                            .query(Point.fromLngLat(long, lat))
+                            .geocodingTypes(GeocodingCriteria.TYPE_POI)
+                            .build()
+                        reverseGeocode.enqueueCall(object : Callback<GeocodingResponse> {
+                            @SuppressLint("SetTextI18n")
+                            override fun onResponse(
+                                call: Call<GeocodingResponse>,
+                                response: Response<GeocodingResponse>
+                            ) {
+                                val results = response.body()!!.features()
+                                if (results.size > 0) {
+                                    // Log the first results Point.
+                                    val firstResultPoint = results[0].placeName()
+                                    if (firstResultPoint != null)
+                                        txt_alamatLokasi.text = "Alamat Lokasi: $firstResultPoint"
+                                    else
                                         txt_alamatLokasi.text = "Alamat Lokasi: Belum tersedia"
-                                    }
-                                    loadingDialog.dismiss()
+                                } else {
+                                    txt_alamatLokasi.text = "Alamat Lokasi: Belum tersedia"
                                 }
-                                override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
-                                    throwable.printStackTrace()
-                                    loadingDialog.dismiss()
-                                }
-                            })
-                        }
-                        cardView4.visibility = View.VISIBLE
-                    } else {
-                        cardView4.visibility = View.INVISIBLE
-                        loadingDialog.dismiss()
+                                loadingDialog.dismiss()
+                            }
+                            override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
+                                throwable.printStackTrace()
+                                loadingDialog.dismiss()
+                            }
+                        })
                     }
-                }
-                .addOnFailureListener {
+                    cardView4.visibility = View.VISIBLE
+                } else {
                     cardView4.visibility = View.INVISIBLE
                     loadingDialog.dismiss()
                 }
-        })
+            }
+            .addOnFailureListener {
+                cardView4.visibility = View.INVISIBLE
+                loadingDialog.dismiss()
+            }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         markerViewManager?.onDestroy()
