@@ -30,13 +30,13 @@ class AppDetailFragment : Fragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
-        view.rv_detailApps.layoutManager = LinearLayoutManager(view.context)
-        loadingDialog = MaterialDialog(view.context)
+        view.rv_detailApps.layoutManager = LinearLayoutManager(requireContext())
+        loadingDialog = MaterialDialog(requireContext())
             .title(text = "Memuat Data...")
             .message(text = "Mohon tunggu")
             .icon(R.drawable.ic_loading)
         sortChoices = arrayOf("Aplikasi", "Durasi", "Internet")
-        sortChoicesAdapter = ArrayAdapter(view.context, R.layout.setting_dropdown_item, sortChoices)
+        sortChoicesAdapter = ArrayAdapter(requireContext(), R.layout.setting_dropdown_item, sortChoices)
         return view
     }
     

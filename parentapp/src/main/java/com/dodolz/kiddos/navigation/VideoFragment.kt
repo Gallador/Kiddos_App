@@ -1,6 +1,5 @@
 package com.dodolz.kiddos.navigation
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,7 +24,6 @@ import kotlinx.android.synthetic.main.fragment_video.*
 import kotlinx.android.synthetic.main.fragment_video.view.*
 import java.io.File
 
-
 class VideoFragment : Fragment() {
     
     private val viewmodel: VideoViewmodel by activityViewModels()
@@ -38,27 +36,27 @@ class VideoFragment : Fragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_video, container, false)
-        view.rv_mainItem.layoutManager = LinearLayoutManager(view.context)
+        view.rv_mainItem.layoutManager = LinearLayoutManager(requireContext())
         return view
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadingDialog = MaterialDialog(view.context)
+        loadingDialog = MaterialDialog(requireContext())
             .title(text = "Memuat Data...")
             .message(text = "Mohon tunggu")
             .icon(R.drawable.ic_loading)
-        requestDialog = MaterialDialog(view.context)
+        requestDialog = MaterialDialog(requireContext())
             .title(text = "Mengirim Permintaan Pemrosesan Video Ke Server")
             .message(text = "Mohon tunggu")
             .cancelOnTouchOutside(false)
             .icon(R.drawable.ic_loading)
-        waitingDialog = MaterialDialog(view.context)
+        waitingDialog = MaterialDialog(requireContext())
             .title(text = "Menunggu Pemrosesan Video")
             .message(text = "Mohon tunggu")
             .cancelOnTouchOutside(false)
             .icon(R.drawable.ic_loading)
-        downloadDialog = MaterialDialog(view.context)
+        downloadDialog = MaterialDialog(requireContext())
             .title(text = "Sedang Mengunduh Video")
             .message(text = "Mohon tunggu")
             .cancelOnTouchOutside(false)
@@ -101,7 +99,7 @@ class VideoFragment : Fragment() {
                 }
                 else -> {
                     requestDialog.dismiss()
-                    Toast.makeText(view.context, "Permintaan pemrosesan video ke server gagal. Coba ulangi secara berkala",
+                    Toast.makeText(requireContext(), "Permintaan pemrosesan video ke server gagal. Coba ulangi secara berkala",
                     Toast.LENGTH_LONG).show()
                 }
             }
@@ -119,9 +117,9 @@ class VideoFragment : Fragment() {
             if (it.isNotEmpty() && it != "fail") {
                 downloadDialog.dismiss()
                 requestDialog.dismiss()
-                launchActionPlayVideo(view.context, it)
+                launchActionPlayVideo( it)
             } else {
-                Toast.makeText(view.context, "Pengunduhan video gagal. Coba ulangi beberapa saat lagi",
+                Toast.makeText(requireContext(), "Pengunduhan video gagal. Coba ulangi beberapa saat lagi",
                     Toast.LENGTH_LONG).show()
             }
         })
@@ -132,10 +130,10 @@ class VideoFragment : Fragment() {
         FirebaseAuth.getInstance().currentUser?.uid?.let { viewmodel.postRequestForVideo(it, data, childEmail) }
     }
     
-    private fun launchActionPlayVideo(context: Context, videoPath: String) {
+    private fun launchActionPlayVideo(videoPath: String) {
         val videoFile = File(videoPath)
         val fileUri =
-            FileProvider.getUriForFile(context, "com.dodolz.kiddos.fileprovider", videoFile)
+            FileProvider.getUriForFile(requireContext(), "com.dodolz.kiddos.fileprovider", videoFile)
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(fileUri, "video/mp4")
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) //DO NOT FORGET THIS EVER

@@ -74,6 +74,7 @@
     <string name="lokasi_anak_belum_tersedia">Lokasi anak belum tersedia</string>
     <string name="video_perekaman_layar_belum_tersedia">Video perekaman layar belum tersedia</string>
     <string name="pengguna_bukan_orangtua">Pengguna bukan berstatus orang tua. Silakan masuk dengan akun berstatus orang tua</string>
+    <string name="belum_tersedia">Belum Tersedia</string>
     <string-array name="setting_spinner_options">
         <item>Perekaman Layar</item>
         <item>Pembatasan Aplikasi</item>

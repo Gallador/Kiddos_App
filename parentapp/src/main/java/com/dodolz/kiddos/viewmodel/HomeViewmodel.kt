@@ -111,12 +111,4 @@ class HomeViewmodel(private val user: FirebaseUser): ViewModel() {
             _recentApps.postValue(Pair(childEmail, mapOfChildrenRecentApps[childEmail]))
         }
     }
-
-    fun forceLoad(childEmail: String) = viewModelScope.launch(Dispatchers.IO)  {
-        val latestTimestamp = mapOfChildrenUsageSum[childEmail]?.timestampPemutakhiranData
-        if (latestTimestamp != null) {
-            val childDocument = db.collection("User").document(childEmail)
-
-        }
-    }
 }

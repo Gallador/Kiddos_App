@@ -136,8 +136,8 @@ class MainForegroundService : Service() {
         // never ending loop to check the last launched app
         CoroutineScope(Dispatchers.IO).launch {
             while (alwaysOn) {
-                val timeNow = SimpleDateFormat("mm").format(Date(System.currentTimeMillis()))
-                if (timeNow == "15" && timeToSendToDb) {
+                val timeNow = Calendar.getInstance()[Calendar.MINUTE] % 15
+                if (timeNow == 0 && timeToSendToDb) {
                     timeToSendToDb = false
                     launch(Dispatchers.IO) {
                         subscriberId?.let { subId ->
@@ -160,7 +160,7 @@ class MainForegroundService : Service() {
                             }
                         }
                     }
-                } else if (timeNow != "15") timeToSendToDb = true
+                } else if (timeNow != 0) timeToSendToDb = true
                 delay(500L)
                 val currentTime = System.currentTimeMillis()
                 val usageEvents = usageStatsManager.queryEvents(currentTime - 500L, currentTime)
@@ -168,12 +168,7 @@ class MainForegroundService : Service() {
                     val currentEvent = UsageEvents.Event()
                     usageEvents.getNextEvent(currentEvent)
                     // 1 = event is a foreground event
-                    if (currentEvent.eventType == 1/* && (
-                            activeBlockMap[currentEvent.packageName] != null ||
-                                activeRestrictMap[currentEvent.packageName] != null ||
-                                activeRecordMap[currentEvent.packageName] != null
-                            )*/
-                    ) {
+                    if (currentEvent.eventType == 1) {
                         launchedApps[currentEvent.timeStamp] = currentEvent
                     }
                 }

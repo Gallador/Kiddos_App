@@ -19,6 +19,7 @@ import com.dodolz.kiddos.model.setting.AppInfo
 import com.dodolz.kiddos.model.setting.AppInfoForRestrict
 import com.dodolz.kiddos.viewmodel.ChildSelectionStateViewmodel
 import com.dodolz.kiddos.viewmodel.SettingViewmodel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_setting.*
 import kotlinx.android.synthetic.main.fragment_setting.view.*
 import kotlinx.android.synthetic.main.item_in_rv_setting_pembatasan.*
@@ -41,28 +42,28 @@ class SettingFragment : Fragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
-        view.rv_aktifPerekaman.layoutManager = LinearLayoutManager(view.context)
+        view.rv_aktifPerekaman.layoutManager = LinearLayoutManager(requireContext())
         view.rv_aktifPerekaman.adapter = null
-        view.rv_nonAktifPerekaman.layoutManager = LinearLayoutManager(view.context)
+        view.rv_nonAktifPerekaman.layoutManager = LinearLayoutManager(requireContext())
         view.rv_nonAktifPerekaman.adapter = null
-        view.rv_aktifPembatasan.layoutManager = LinearLayoutManager(view.context)
+        view.rv_aktifPembatasan.layoutManager = LinearLayoutManager(requireContext())
         view.rv_aktifPembatasan.adapter = null
-        view.rv_nonAktifPembatasan.layoutManager = LinearLayoutManager(view.context)
+        view.rv_nonAktifPembatasan.layoutManager = LinearLayoutManager(requireContext())
         view.rv_nonAktifPembatasan.adapter = null
-        view.rv_aktifBlokir.layoutManager = LinearLayoutManager(view.context)
+        view.rv_aktifBlokir.layoutManager = LinearLayoutManager(requireContext())
         view.rv_aktifBlokir.adapter = null
-        view.rv_nonAktifBlokir.layoutManager = LinearLayoutManager(view.context)
+        view.rv_nonAktifBlokir.layoutManager = LinearLayoutManager(requireContext())
         view.rv_nonAktifBlokir.adapter = null
         settingChoices = arrayOf("Perekaman Layar", "Pembatasan Aplikasi", "Blokir Aplikasi")
-        settingChoicesAdapter = ArrayAdapter(view.context, R.layout.setting_dropdown_item, settingChoices)
+        settingChoicesAdapter = ArrayAdapter(requireContext(), R.layout.setting_dropdown_item, settingChoices)
         recordDurationChoices = arrayOf("1 Menit", "2 Menit", "3 Menit", "4 Menit", "5 Menit")
-        recordDurationChoicesAdapter = ArrayAdapter(view.context, R.layout.setting_dropdown_item, recordDurationChoices)
+        recordDurationChoicesAdapter = ArrayAdapter(requireContext(), R.layout.setting_dropdown_item, recordDurationChoices)
         return view
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadingDialog = MaterialDialog(view.context)
+        loadingDialog = MaterialDialog(requireContext())
             .title(text = "Memproses")
             .message(text = "Loading")
             .icon(R.drawable.ic_loading)
@@ -160,6 +161,7 @@ class SettingFragment : Fragment() {
                 rv_nonAktifPerekaman.adapter = this
                 setData(nonActiveAppList)
             }
+            requireActivity().swipeContainer.isRefreshing = false
         })
     }
     
@@ -208,6 +210,7 @@ class SettingFragment : Fragment() {
                 rv_nonAktifPembatasan.adapter = this
                 setData(nonActiveAppList)
             }
+            requireActivity().swipeContainer.isRefreshing = false
         })
     }
     
@@ -250,77 +253,74 @@ class SettingFragment : Fragment() {
                 rv_nonAktifBlokir.adapter = this
                 setData(nonActiveAppList)
             }
+            requireActivity().swipeContainer.isRefreshing = false
         })
     }
     
     private fun activationRecordApp(data: AppInfo, switch: Switch, childEmail: String) {
-        context?.let {
-            MaterialDialog(it).show {
-                title(text = "Aktifkan Perekaman Layar untuk aplikasi ${data.namaAplikasi}")
-                message(text = "Perekaman Layar akan diaktifkan ketika anak sedang membuka aplikasi ${data.namaAplikasi}")
-                positiveButton(text = "Lanjutkan") {
-                    loadingDialog.show()
-                    viewmodel.activateAppRecord(data, childEmail)
-                    viewmodel.activationRecordStatus.observe(viewLifecycleOwner, Observer { result ->
+        MaterialDialog(requireContext()).show {
+            title(text = "Aktifkan Perekaman Layar untuk aplikasi ${data.namaAplikasi}")
+            message(text = "Perekaman Layar akan diaktifkan ketika anak sedang membuka aplikasi ${data.namaAplikasi}")
+            positiveButton(text = "Lanjutkan") {
+                loadingDialog.show()
+                viewmodel.activateAppRecord(data, childEmail)
+                viewmodel.activationRecordStatus.observe(viewLifecycleOwner, Observer { result ->
+                    if (result) {
+                        loadingDialog.dismiss()
+                        activeRecordAdapter.clearData()
+                        nonActiveRecordAdapter.clearData()
+                        Toast.makeText(
+                            requireContext(),
+                            "Pengaktifan Perekaman Layar untuk aplikasi ${data.namaAplikasi} berhasil.",
+                            Toast.LENGTH_LONG).show()
+                        viewmodel.loadAppListForRecord(childEmail, true)
+                    } else {
+                        loadingDialog.dismiss()
+                        switch.isChecked = true
+                        Toast.makeText(
+                            requireContext(),
+                            "Pengaktifan Perekaman Layar untuk aplikasi ${data.namaAplikasi} gagal.",
+                            Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
+            negativeButton(text = "Batalkan") {
+                switch.isChecked = false
+            }
+        }
+    }
+    
+    private fun deactivationRecordApp(data: AppInfo, switch: Switch, childEmail: String) {
+        MaterialDialog(requireContext()).show {
+            title(text = "Non Aktifkan Perekaman Layar untuk aplikasi ${data.namaAplikasi}")
+            message(text = "Perekaman layar akan dinon-aktifkan untuk aplikasi ${data.namaAplikasi}")
+            positiveButton(text = "Lanjutkan") {
+                loadingDialog.show()
+                data.namaAplikasi?.let { namaAplikasi ->
+                    viewmodel.deactivateAppRecord(namaAplikasi, childEmail)
+                    viewmodel.deactivationRecordStatus.observe(viewLifecycleOwner, Observer { result ->
                         if (result) {
                             loadingDialog.dismiss()
                             activeRecordAdapter.clearData()
                             nonActiveRecordAdapter.clearData()
                             Toast.makeText(
-                                context,
-                                "Pengaktifan Perekaman Layar untuk aplikasi ${data.namaAplikasi} berhasil.",
+                                requireContext(),
+                                "Penonaktifan Perekaman Layar untuk aplikasi $namaAplikasi berhasil.",
                                 Toast.LENGTH_LONG).show()
                             viewmodel.loadAppListForRecord(childEmail, true)
                         } else {
                             loadingDialog.dismiss()
                             switch.isChecked = true
                             Toast.makeText(
-                                context,
-                                "Pengaktifan Perekaman Layar untuk aplikasi ${data.namaAplikasi} gagal.",
+                                requireContext(),
+                                "Penonaktifan Perekaman Layar untuk aplikasi $namaAplikasi gagal.",
                                 Toast.LENGTH_LONG).show()
                         }
                     })
                 }
-                negativeButton(text = "Batalkan") {
-                    switch.isChecked = false
-                }
             }
-        }
-    }
-    
-    private fun deactivationRecordApp(data: AppInfo, switch: Switch, childEmail: String) {
-        context?.let {
-            MaterialDialog(it).show {
-                title(text = "Non Aktifkan Perekaman Layar untuk aplikasi ${data.namaAplikasi}")
-                message(text = "Perekaman layar akan dinon-aktifkan untuk aplikasi ${data.namaAplikasi}")
-                positiveButton(text = "Lanjutkan") {
-                    loadingDialog.show()
-                    data.namaAplikasi?.let { namaAplikasi ->
-                        viewmodel.deactivateAppRecord(namaAplikasi, childEmail)
-                        viewmodel.deactivationRecordStatus.observe(viewLifecycleOwner, Observer { result ->
-                            if (result) {
-                                loadingDialog.dismiss()
-                                activeRecordAdapter.clearData()
-                                nonActiveRecordAdapter.clearData()
-                                Toast.makeText(
-                                    context,
-                                    "Penonaktifan Perekaman Layar untuk aplikasi $namaAplikasi berhasil.",
-                                    Toast.LENGTH_LONG).show()
-                                viewmodel.loadAppListForRecord(childEmail, true)
-                            } else {
-                                loadingDialog.dismiss()
-                                switch.isChecked = true
-                                Toast.makeText(
-                                    context,
-                                    "Penonaktifan Perekaman Layar untuk aplikasi $namaAplikasi gagal.",
-                                    Toast.LENGTH_LONG).show()
-                            }
-                        })
-                    }
-                }
-                negativeButton(text = "Batalkan") {
-                    switch.isChecked = true
-                }
+            negativeButton(text = "Batalkan") {
+                switch.isChecked = true
             }
         }
     }
@@ -331,83 +331,79 @@ class SettingFragment : Fragment() {
         viewmodel.setRecordDurationStatus.observe(viewLifecycleOwner, Observer {
             if (it) {
                 loadingDialog.dismiss()
-                Toast.makeText(context, "Durasi Perekaman Layar berhasil disimpan", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Durasi Perekaman Layar berhasil disimpan", Toast.LENGTH_LONG).show()
             } else {
                 loadingDialog.dismiss()
-                Toast.makeText(context, "Durasi Perekaman Layar gagal disimpan", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Durasi Perekaman Layar gagal disimpan", Toast.LENGTH_LONG).show()
                 txt_spinnerSetting.setText(recordDurationChoices[minute - 1], false)
             }
         })
     }
     
     private fun activationRestrictApp(data: AppInfo, switch: Switch, childEmail: String) {
-        context?.let {
-            MaterialDialog(it).show {
-                title(text = "Aktifkan Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi}")
-                message(text = "Pembatasan Penggunaan akan diaktifkan untuk aplikasi ${data.namaAplikasi}")
-                positiveButton(text = "Lanjutkan") {
-                    loadingDialog.show()
-                    viewmodel.activateAppRestrict(data, childEmail)
-                    viewmodel.activationRestrictStatus.observe(viewLifecycleOwner, Observer { result ->
+        MaterialDialog(requireContext()).show {
+            title(text = "Aktifkan Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi}")
+            message(text = "Pembatasan Penggunaan akan diaktifkan untuk aplikasi ${data.namaAplikasi}")
+            positiveButton(text = "Lanjutkan") {
+                loadingDialog.show()
+                viewmodel.activateAppRestrict(data, childEmail)
+                viewmodel.activationRestrictStatus.observe(viewLifecycleOwner, Observer { result ->
+                    if (result) {
+                        loadingDialog.dismiss()
+                        activeRestrictAdapter.clearData()
+                        nonActiveRestrictAdapter.clearData()
+                        Toast.makeText(
+                            requireContext(),
+                            "Aktivasi Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi} berhasil.",
+                            Toast.LENGTH_LONG).show()
+                        viewmodel.loadAppListForRestrict(childEmail, true)
+                    } else {
+                        loadingDialog.dismiss()
+                        switch.isChecked = true
+                        Toast.makeText(
+                            requireContext(),
+                            "Aktivasi Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi} gagal.",
+                            Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
+            negativeButton(text = "Batalkan") {
+                switch.isChecked = false
+            }
+        }
+    }
+    
+    private fun deactivationRestrictApp(data: AppInfoForRestrict, switch: Switch, childEmail: String) {
+        MaterialDialog(requireContext()).show {
+            title(text = "Non Aktifkan Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi}")
+            message(text = "Pembatasan Penggunaan akan dinon-aktifkan untuk aplikasi ${data.namaAplikasi}")
+            positiveButton(text = "Lanjutkan") {
+                loadingDialog.show()
+                data.namaAplikasi?.let { namaAplikasi ->
+                    viewmodel.deactivateAppRestrict(namaAplikasi, childEmail)
+                    viewmodel.deactivationRestrictStatus.observe(viewLifecycleOwner, Observer { result ->
                         if (result) {
                             loadingDialog.dismiss()
                             activeRestrictAdapter.clearData()
                             nonActiveRestrictAdapter.clearData()
                             Toast.makeText(
-                                context,
-                                "Aktivasi Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi} berhasil.",
+                                requireContext(),
+                                "Penonaktifan Pembatasan Penggunaan untuk aplikasi $namaAplikasi berhasil.",
                                 Toast.LENGTH_LONG).show()
                             viewmodel.loadAppListForRestrict(childEmail, true)
                         } else {
                             loadingDialog.dismiss()
                             switch.isChecked = true
                             Toast.makeText(
-                                context,
-                                "Aktivasi Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi} gagal.",
+                                requireContext(),
+                                "Penonaktifan Pembatasan Penggunaan untuk aplikasi $namaAplikasi gagal.",
                                 Toast.LENGTH_LONG).show()
                         }
                     })
                 }
-                negativeButton(text = "Batalkan") {
-                    switch.isChecked = false
-                }
             }
-        }
-    }
-    
-    private fun deactivationRestrictApp(data: AppInfoForRestrict, switch: Switch, childEmail: String) {
-        context?.let {
-            MaterialDialog(it).show {
-                title(text = "Non Aktifkan Pembatasan Penggunaan untuk aplikasi ${data.namaAplikasi}")
-                message(text = "Pembatasan Penggunaan akan dinon-aktifkan untuk aplikasi ${data.namaAplikasi}")
-                positiveButton(text = "Lanjutkan") {
-                    loadingDialog.show()
-                    data.namaAplikasi?.let { namaAplikasi ->
-                        viewmodel.deactivateAppRestrict(namaAplikasi, childEmail)
-                        viewmodel.deactivationRestrictStatus.observe(viewLifecycleOwner, Observer { result ->
-                            if (result) {
-                                loadingDialog.dismiss()
-                                activeRestrictAdapter.clearData()
-                                nonActiveRestrictAdapter.clearData()
-                                Toast.makeText(
-                                    context,
-                                    "Penonaktifan Pembatasan Penggunaan untuk aplikasi $namaAplikasi berhasil.",
-                                    Toast.LENGTH_LONG).show()
-                                viewmodel.loadAppListForRestrict(childEmail, true)
-                            } else {
-                                loadingDialog.dismiss()
-                                switch.isChecked = true
-                                Toast.makeText(
-                                    context,
-                                    "Penonaktifan Pembatasan Penggunaan untuk aplikasi $namaAplikasi gagal.",
-                                    Toast.LENGTH_LONG).show()
-                            }
-                        })
-                    }
-                }
-                negativeButton(text = "Batalkan") {
-                    switch.isChecked = true
-                }
+            negativeButton(text = "Batalkan") {
+                switch.isChecked = true
             }
         }
     }
@@ -418,83 +414,79 @@ class SettingFragment : Fragment() {
         viewmodel.setRestrictDurationStatus.observe(viewLifecycleOwner, Observer {
             if (it) {
                 loadingDialog.dismiss()
-                Toast.makeText(context, "Durasi Pembatasan Penggunaan untuk Aplikasi ${data.namaAplikasi} berhasil disimpan", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Durasi Pembatasan Penggunaan untuk Aplikasi ${data.namaAplikasi} berhasil disimpan", Toast.LENGTH_LONG).show()
             } else {
                 loadingDialog.dismiss()
-                Toast.makeText(context, "Durasi Perekaman Layar gagal disimpan", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Durasi Perekaman Layar gagal disimpan", Toast.LENGTH_LONG).show()
                 txt_pilihanDurasiPembatasan.setText(recordDurationChoices[hour - 1], false)
             }
         })
     }
     
     private fun activationBlockApp(data: AppInfo, switch: Switch, childEmail: String) {
-        context?.let {
-            MaterialDialog(it).show {
-                title(text = "Aktifkan Blokir akses untuk aplikasi ${data.namaAplikasi}")
-                message(text = "Blokir akan diaktifkan untuk aplikasi ${data.namaAplikasi}")
-                positiveButton(text = "Lanjutkan") {
-                    loadingDialog.show()
-                    viewmodel.activateAppBlock(data, childEmail)
-                    viewmodel.activationBlockStatus.observe(viewLifecycleOwner, Observer { result ->
-                        if (result) {
-                            loadingDialog.dismiss()
-                            activeBlockAdapter.clearData()
-                            nonActiveBlockAdapter.clearData()
-                            Toast.makeText(
-                                context,
-                                "Aktivasi pemblokiran untuk aplikasi ${data.namaAplikasi} berhasil.",
-                                Toast.LENGTH_LONG).show()
-                            viewmodel.loadAppListForBlock(childEmail, true)
-                        } else {
-                            loadingDialog.dismiss()
-                            switch.isChecked = true
-                            Toast.makeText(
-                                context,
-                                "Aktivasi pemblokiran untuk aplikasi ${data.namaAplikasi} gagal.",
-                                Toast.LENGTH_LONG).show()
-                        }
-                    })
-                }
-                negativeButton(text = "Batalkan") {
-                    switch.isChecked = false
-                }
+        MaterialDialog(requireContext()).show {
+            title(text = "Aktifkan Blokir akses untuk aplikasi ${data.namaAplikasi}")
+            message(text = "Blokir akan diaktifkan untuk aplikasi ${data.namaAplikasi}")
+            positiveButton(text = "Lanjutkan") {
+                loadingDialog.show()
+                viewmodel.activateAppBlock(data, childEmail)
+                viewmodel.activationBlockStatus.observe(viewLifecycleOwner, Observer { result ->
+                    if (result) {
+                        loadingDialog.dismiss()
+                        activeBlockAdapter.clearData()
+                        nonActiveBlockAdapter.clearData()
+                        Toast.makeText(
+                            requireContext(),
+                            "Aktivasi pemblokiran untuk aplikasi ${data.namaAplikasi} berhasil.",
+                            Toast.LENGTH_LONG).show()
+                        viewmodel.loadAppListForBlock(childEmail, true)
+                    } else {
+                        loadingDialog.dismiss()
+                        switch.isChecked = true
+                        Toast.makeText(
+                            requireContext(),
+                            "Aktivasi pemblokiran untuk aplikasi ${data.namaAplikasi} gagal.",
+                            Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
+            negativeButton(text = "Batalkan") {
+                switch.isChecked = false
             }
         }
     }
     
     private fun deactivationBlockApp(data: AppInfo, switch: Switch, childEmail: String) {
-        context?.let {
-            MaterialDialog(it).show {
-                title(text = "Non Aktifkan Blokir akses untuk aplikasi ${data.namaAplikasi}")
-                message(text = "Blokir akan dinon-aktifkan untuk aplikasi ${data.namaAplikasi}")
-                positiveButton(text = "Lanjutkan") {
-                    loadingDialog.show()
-                    data.namaAplikasi?.let { namaAplikasi ->
-                        viewmodel.deactivateAppBlock(namaAplikasi, childEmail)
-                        viewmodel.deactivationBlockStatus.observe(viewLifecycleOwner, Observer { result ->
-                            if (result) {
-                                loadingDialog.dismiss()
-                                activeBlockAdapter.clearData()
-                                nonActiveBlockAdapter.clearData()
-                                viewmodel.loadAppListForBlock(childEmail, true)
-                                Toast.makeText(
-                                    context,
-                                    "Penonaktifan Blokir akses untuk aplikasi $namaAplikasi berhasil.",
-                                    Toast.LENGTH_LONG).show()
-                            } else {
-                                loadingDialog.dismiss()
-                                switch.isChecked = true
-                                Toast.makeText(
-                                    context,
-                                    "Penonaktifan Blokir akses untuk aplikasi $namaAplikasi gagal.",
-                                    Toast.LENGTH_LONG).show()
-                            }
-                        })
-                    }
+        MaterialDialog(requireContext()).show {
+            title(text = "Non Aktifkan Blokir akses untuk aplikasi ${data.namaAplikasi}")
+            message(text = "Blokir akan dinon-aktifkan untuk aplikasi ${data.namaAplikasi}")
+            positiveButton(text = "Lanjutkan") {
+                loadingDialog.show()
+                data.namaAplikasi?.let { namaAplikasi ->
+                    viewmodel.deactivateAppBlock(namaAplikasi, childEmail)
+                    viewmodel.deactivationBlockStatus.observe(viewLifecycleOwner, Observer { result ->
+                        if (result) {
+                            loadingDialog.dismiss()
+                            activeBlockAdapter.clearData()
+                            nonActiveBlockAdapter.clearData()
+                            viewmodel.loadAppListForBlock(childEmail, true)
+                            Toast.makeText(
+                                requireContext(),
+                                "Penonaktifan Blokir akses untuk aplikasi $namaAplikasi berhasil.",
+                                Toast.LENGTH_LONG).show()
+                        } else {
+                            loadingDialog.dismiss()
+                            switch.isChecked = true
+                            Toast.makeText(
+                                requireContext(),
+                                "Penonaktifan Blokir akses untuk aplikasi $namaAplikasi gagal.",
+                                Toast.LENGTH_LONG).show()
+                        }
+                    })
                 }
-                negativeButton(text = "Batalkan") {
-                    switch.isChecked = true
-                }
+            }
+            negativeButton(text = "Batalkan") {
+                switch.isChecked = true
             }
         }
     }

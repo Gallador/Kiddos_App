@@ -1,5 +1,6 @@
 package com.dodolz.kiddos.navigation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,6 +24,8 @@ import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class HomeFragment : Fragment() {
@@ -57,26 +60,35 @@ class HomeFragment : Fragment() {
         viewmodel.recentApps.observe(viewLifecycleOwner, Observer { updateRecentApp(it) })
     }
     
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun updateUsageSum(data: ChildInfo, context: Context) {
         // Download app icon for appPalingLamaDiakses from child directory in storage
+        data.timestampPemutakhiranData?.let {
+            val timestamp: Long = it.toString().toLong()
+            val sdf = SimpleDateFormat("HH:mm")
+            val netDate = Date(timestamp)
+            txt_waktuDimutakhirkan.text = "Dimutakhirkan ${sdf.format(netDate)}"
+        }
         val storage = Firebase.storage
         val storageRef = storage.reference.child("${data.email}/iconApp")
         storageRef.child("${data.appPalingLamaDiakses?.get(1).toString()}.png").downloadUrl
             .addOnSuccessListener { iconUrl ->
                 iconUrl?.let {
-                    Glide.with(context)
+                    Glide.with(requireContext())
                         .load(iconUrl)
                         .into(img_appPalingLama)
                 }
             }
             .addOnFailureListener {
-                Glide.with(context)
+                Glide.with(requireContext())
                     .load(R.drawable.ic_home_24)
                     .into(img_appPalingLama)
             }
         //--------------------------------------
-        
-        txt_appPalingLama.text =  data.appPalingLamaDiakses?.get(0).toString()
+
+        data.appPalingLamaDiakses?.let {
+            txt_appPalingLama.text = it[0]
+        }
         data.totalDurasiPenggunaanSmartphone?.let {
             val hour = TimeUnit.MILLISECONDS.toHours(it)
             val minute = TimeUnit.MILLISECONDS.toMinutes(it) % TimeUnit.HOURS.toMinutes(1)

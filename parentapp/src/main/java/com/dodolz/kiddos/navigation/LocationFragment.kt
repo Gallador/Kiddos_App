@@ -26,6 +26,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.markerview.MarkerView
 import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_location.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,7 +44,7 @@ class LocationFragment : Fragment() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.also { Mapbox.getInstance(it, getString(R.string.mapbox_access_token)) }
+        requireContext().also { Mapbox.getInstance(it, getString(R.string.mapbox_access_token)) }
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,7 +54,7 @@ class LocationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         map_View?.onCreate(savedInstanceState)
-        loadingDialog = MaterialDialog(view.context)
+        loadingDialog = MaterialDialog(requireContext())
             .title(text = "Memuat Data...")
             .message(text = "Mohon tunggu")
             .icon(R.drawable.ic_loading)
@@ -79,11 +80,11 @@ class LocationFragment : Fragment() {
                     val timestamp: Long = it["waktuDimutakhirkan"].toString().toLong()
                     val sdf = SimpleDateFormat("HH:mm")
                     val netDate = Date(timestamp)
-                    txt_waktuUpdate.text = "Dimutakhirkan ${sdf.format(netDate)} WIB"
+                    txt_waktuUpdate.text = "Dimutakhirkan ${sdf.format(netDate)}"
                     map_View?.getMapAsync { mapboxMap ->
                         mapboxMap.setStyle(Style.OUTDOORS)
                         mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), 14.0))
-                        val markerView = ImageView(context)
+                        val markerView = ImageView(requireContext())
                         markerView.layoutParams = LinearLayout.LayoutParams(100, 100)
                         markerView.setImageResource(R.drawable.ic_location_24)
                         markerViewManager = MarkerViewManager(map_View, mapboxMap)
@@ -124,10 +125,12 @@ class LocationFragment : Fragment() {
                     cardView4.visibility = View.INVISIBLE
                     loadingDialog.dismiss()
                 }
+                requireActivity().swipeContainer.isRefreshing = false
             }
             .addOnFailureListener {
                 cardView4.visibility = View.INVISIBLE
                 loadingDialog.dismiss()
+                requireActivity().swipeContainer.isRefreshing = false
             }
     }
 

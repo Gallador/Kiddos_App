@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             R.id.nav_app_detail -> appDetailViewmodel.loadDetailApps(currentChild, true)
             R.id.nav_video -> videoViewmodel.loadListOfVideos(currentChild, true)
             R.id.nav_setting -> settingViewmodel.refreshSetting(currentChild)
-            R.id.nav_location -> txt_title.text = this.resources.getString(R.string.title_location)
+            R.id.nav_location -> locationViewmodel.refreshData(currentChild)
         }
     }
 }

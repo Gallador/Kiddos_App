@@ -13,6 +13,17 @@
         android:paddingBottom="44dp"
         tools:context=".navigation.HomeFragment">
 
+        <TextView
+            android:id="@+id/txt_waktuDimutakhirkan"
+            style="@style/ContentTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Dimutakhirkan 20:30" />
+
         <!--Usage Sum-->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
@@ -25,7 +36,7 @@
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/txt_waktuDimutakhirkan">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -58,10 +69,10 @@
                     android:fontFamily="@font/public_sans_reg"
                     android:textColor="@color/colorFontDark"
                     android:textSize="16sp"
+                    android:text="@string/belum_tersedia"
                     app:layout_constraintBottom_toBottomOf="@+id/img_appPalingLama"
                     app:layout_constraintStart_toEndOf="@id/img_appPalingLama"
-                    app:layout_constraintTop_toTopOf="@+id/img_appPalingLama"
-                    tools:text="Twitter - 1 Jam : 5 Menit" />
+                    app:layout_constraintTop_toTopOf="@+id/img_appPalingLama"/>
 
                 <TextView
                     android:id="@+id/textView2"
@@ -88,10 +99,11 @@
                     android:fontFamily="@font/public_sans_reg"
                     android:textColor="@color/colorFontDark"
                     android:textSize="16sp"
+                    android:text="@string/belum_tersedia"
                     app:layout_constraintBottom_toBottomOf="@+id/img_durasiPenggunaan"
                     app:layout_constraintStart_toEndOf="@id/img_durasiPenggunaan"
                     app:layout_constraintTop_toTopOf="@+id/img_durasiPenggunaan"
-                    tools:text="4 Jam - 5 Menit" />
+                    />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -130,10 +142,11 @@
                     android:fontFamily="@font/public_sans_reg"
                     android:textColor="@color/colorFontDark"
                     android:textSize="16sp"
+                    android:text="@string/belum_tersedia"
                     app:layout_constraintBottom_toBottomOf="@+id/img_penggunaanInternet"
                     app:layout_constraintStart_toEndOf="@id/img_penggunaanInternet"
                     app:layout_constraintTop_toTopOf="@+id/img_penggunaanInternet"
-                    tools:text="500 MB" />
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
