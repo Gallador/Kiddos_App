@@ -160,14 +160,6 @@ class HomeActivity : AppCompatActivity() {
                 progressbar.visibility = View.VISIBLE
                 txt_memuatData.text = this.resources.getString(R.string.sedang_memuat_data)
                 val subscriberId = (this.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).subscriberId
-                Intent(this, MainForegroundService::class.java).also { intent ->
-                    intent.putExtra(MEDIA_PROJECTION_DATA, data)
-                    intent.putExtra(MEDIA_PROJECTION_RESULT_CODE, resultCode)
-                    intent.putExtra(USER_EMAIL, FirebaseAuth.getInstance().currentUser?.email)
-                    intent.putExtra(SUB_ID, subscriberId)
-                    if (Build.VERSION.SDK_INT >= 26) startForegroundService(intent)
-                    else startService(intent)
-                }
                 FirebaseAuth.getInstance().currentUser?.let {
                     viewmodel.getPhoneUsageStats(it.email.toString(), subscriberId)
                     txt_greeting.text = "Hai, ${it.displayName.toString()}"
@@ -180,6 +172,17 @@ class HomeActivity : AppCompatActivity() {
                             .into(headerView.img_profilePic)
                     }
                     getLocation(it.email.toString())
+                }
+                if (!checkService()) {
+                    Log.d("START_SERVICE", "WORK")
+                    Intent(this, MainForegroundService::class.java).also { intent ->
+                        intent.putExtra(MEDIA_PROJECTION_DATA, data)
+                        intent.putExtra(MEDIA_PROJECTION_RESULT_CODE, resultCode)
+                        intent.putExtra(USER_EMAIL, FirebaseAuth.getInstance().currentUser?.email)
+                        intent.putExtra(SUB_ID, subscriberId)
+                        if (Build.VERSION.SDK_INT >= 26) startForegroundService(intent)
+                        else startService(intent)
+                    }
                 }
             }
         } else if (requestCode == USAGE_PERMS_REQUEST_CODE) {
@@ -265,15 +268,21 @@ class HomeActivity : AppCompatActivity() {
         }
     }
     
-    private fun checkService(){
+    private fun checkService(): Boolean{
         val myAM: ActivityManager = applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val myList: List<ActivityManager.RunningServiceInfo> = myAM.getRunningServices(30)
+        var serviceIsRunning = false
         for (element in myList) {
             val serviceName = MainForegroundService::class.java.name
             val mName: String = element.service.className
+            if (mName == serviceName) {
+                serviceIsRunning = true
+                break
+            }/*
             val sa = element.service.packageName
             val aaa = element.service.shortClassName
-            Log.d("SERVICE NAME", "$serviceName - $mName - $sa - $aaa")
+            Log.d("SERVICE NAME", "$serviceName - $mName - $sa - $aaa")*/
         }
+        return serviceIsRunning
     }
 }

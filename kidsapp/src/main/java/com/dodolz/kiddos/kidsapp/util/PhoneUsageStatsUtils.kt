@@ -45,7 +45,7 @@ object PhoneUsageStatsUtils {
     
         // Untuk menghitung waktu penggunaan per masing-masing app
         // dengan melakukan penjumlahan total waktu selisih foreground dengan background
-        for (i in 0 until (allEvents.size - 1)) {
+        for (i in 0 until (allEvents.size - 1) step 2) {
             val currentEvent = allEvents[i]
             val nextEvent = allEvents[i + 1]
             if (currentEvent.eventType == 1 && nextEvent.eventType == 2 &&
@@ -114,21 +114,22 @@ object PhoneUsageStatsUtils {
         // Untuk bagian Riwayat Akses Aplikasi
         // Mem-filter item pada tempListAppHistory untuk dimasukkan ke finalListAppHistory
         if (tempListAppHistory.isNotEmpty()) {
-            tempListAppHistory.firstKey()?.let {
+            tempListAppHistory.firstKey()?.let { firstKey ->
                 val tempAppHistoryObj = object {
-                    var appLaunchTime: Long? = it
-                    var appName: String? = tempListAppHistory[it]?.namaAplikasi
+                    var appLaunchTime: Long? = firstKey
+                    var appName: String? = tempListAppHistory[firstKey]?.namaAplikasi
                 }
-                for ((key, appHistory) in tempListAppHistory) {
-                    if (finalListAppHistory.size == 10) {
-                        break
-                    }
+                finalListAppHistory[firstKey] = tempListAppHistory[firstKey]
+                for ((key, appHistory) in tempListAppHistory.minus(firstKey)) {
                     tempAppHistoryObj.appName?.let { appName ->
                         if (key != tempAppHistoryObj.appLaunchTime && appHistory.namaAplikasi != appName) {
                             finalListAppHistory[key] = appHistory
                             tempAppHistoryObj.appLaunchTime = key
                             tempAppHistoryObj.appName = appHistory.namaAplikasi
                         }
+                    }
+                    if (finalListAppHistory.size == 15) {
+                        break
                     }
                 }
             }
