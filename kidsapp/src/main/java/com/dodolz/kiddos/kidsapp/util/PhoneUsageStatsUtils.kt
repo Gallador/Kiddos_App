@@ -226,7 +226,7 @@ object PhoneUsageStatsUtils {
     }
     
     private fun isAppIncluded(appName: String): Boolean {
-        return appName == "Kiddos Kids" || appName == "Kiddos" ||appName.contains("Launcher") ||
+        return appName == "Kiddos Kids" || appName == "Kiddos Parent" ||appName.contains("Launcher") ||
         appName.contains("launcher") || appName.contains("Home") ||
         appName.contains("home")
     }
