@@ -16,7 +16,6 @@ import android.os.RemoteException
 import com.dodolz.kiddos.kidsapp.model.*
 import java.util.*
 
-
 object PhoneUsageStatsUtils {
     
     fun getUsageStatictics(context: Context, subscriberId: String)
@@ -45,7 +44,7 @@ object PhoneUsageStatsUtils {
     
         // Untuk menghitung waktu penggunaan per masing-masing app
         // dengan melakukan penjumlahan total waktu selisih foreground dengan background
-        for (i in 0 until (allEvents.size - 1) step 2) {
+        for (i in 0 until (allEvents.size - 1)) {
             val currentEvent = allEvents[i]
             val nextEvent = allEvents[i + 1]
             if (currentEvent.eventType == 1 && nextEvent.eventType == 2 &&

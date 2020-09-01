@@ -23,7 +23,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.MEDIA_PROJECTION_DATA
 import com.dodolz.kiddos.kidsapp.ConstantValue.Companion.MEDIA_PROJECTION_RESULT_CODE
@@ -52,6 +51,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random
 
 class MainForegroundService : Service() {
     
@@ -59,6 +59,7 @@ class MainForegroundService : Service() {
     private var mMediaProjection: MediaProjection? = null
     private var mVirtualDisplay: VirtualDisplay? = null
     private var isBusyRecording: Boolean = false
+    private var recordRandomInterval: Boolean = false
     private var userEmail: String? = null
     private var subscriberId: String? = null
     private var recordDuration: Int = 1
@@ -188,21 +189,21 @@ class MainForegroundService : Service() {
                                     if (!isBusyRecording) {
                                         val appName = activeRecordMap[lastApp]?.namaAplikasi
                                         appName?.also {
-                                            startRecordScreen(intent, it, recordDuration, this)
+                                            startRecordScreen(intent, it, recordDuration)
                                         }
                                     }
                                 }
                             }
                         }
                         activeRecordMap[lastApp] != null -> {
-                            if (!isBusyRecording) {
+                            if (!isBusyRecording && !recordRandomInterval) {
                                 val appName = activeRecordMap[lastApp]?.namaAplikasi
                                 appName?.also {
-                                    startRecordScreen(intent, it, recordDuration, this)
+                                    startRecordScreen(intent, it, recordDuration)
                                 }
                             }
                         }
-                        else -> isBusyRecording = false
+                        else -> { recordRandomInterval = false }
                     }
                     launchedApps.clear()
                 }
@@ -318,83 +319,83 @@ class MainForegroundService : Service() {
     private fun startRecordScreen(
         intent: Intent,
         appName: String,
-        duration: Int,
-        coroutineScope: CoroutineScope
+        duration: Int
     ) {
         val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         val mData: Intent? = intent.getParcelableExtra(MEDIA_PROJECTION_DATA)
         val mResultCode = intent.getIntExtra(MEDIA_PROJECTION_RESULT_CODE, -1)
         val mPath = applicationContext.filesDir.absolutePath + "/video"
         if (!File(mPath).exists()) File(mPath).mkdirs()
-        val recordTimeForFolder = SimpleDateFormat("dd-MM-yy_HH:mm:ss").format(Date(System.currentTimeMillis()))
-        val recordTimeForFile = recordTimeForFolder.filterNot{ a -> a == ':'} // -> dd-MM-yy_HHmmss
-        val folderFileName = "${appName.filterNot{ a -> a.isWhitespace()}}_${recordTimeForFolder}"
-        val videoFileName = "${appName.filterNot{ a -> a.isWhitespace()}}_${recordTimeForFile}.mp4"
-        //val videoFile = File(mPath, videoFileName)
-        val videoFilePath = File(mPath, videoFileName).absolutePath
-        val mScreenDensity = Resources.getSystem().displayMetrics.densityDpi
-        mData?.let {
-            mMediaProjection = manager.getMediaProjection(mResultCode, it) as MediaProjection
-        }
-        mMediaProjection?.also {
-            mMediaRecorder = MediaRecorder()
-            mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE)
-            mMediaRecorder.setOutputFormat(2) // For MPEG_4
-            try {
-                mMediaRecorder.setVideoEncoder(2)
-                Log.d("H264", "CHOOSED")// For H264 Encoder, for HEVC Encoder set it to 5
-            } catch (ex: IllegalArgumentException) {
-                mMediaRecorder.setVideoEncoder(0) // back to default
+
+        recordRandomInterval = true
+        CoroutineScope(Dispatchers.IO).launch {
+            while (recordRandomInterval) {
+                val recordTimeForFolder =
+                    SimpleDateFormat("dd-MM-yy_HH:mm:ss").format(Date(System.currentTimeMillis()))
+                val recordTimeForFile =
+                    recordTimeForFolder.filterNot { a -> a == ':' } // -> dd-MM-yy_HHmmss
+                val folderFileName =
+                    "${appName.filterNot { a -> a.isWhitespace() }}_${recordTimeForFolder}"
+                val videoFileName =
+                    "${appName.filterNot { a -> a.isWhitespace() }}_${recordTimeForFile}.mp4"
+                //val videoFile = File(mPath, videoFileName)
+                val videoFilePath = File(mPath, videoFileName).absolutePath
+                val mScreenDensity = Resources.getSystem().displayMetrics.densityDpi
+                mData?.let {
+                    mMediaProjection = manager.getMediaProjection(mResultCode, it) as MediaProjection
+                }
+                mMediaProjection?.also {
+                    mMediaRecorder = MediaRecorder()
+                    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE)
+                    mMediaRecorder.setOutputFormat(2) // For MPEG_4
+                    try {
+                        mMediaRecorder.setVideoEncoder(2)// For H264 Encoder, for HEVC Encoder set it to 5
+                    } catch (ex: IllegalArgumentException) {
+                        mMediaRecorder.setVideoEncoder(0) // back to default
+                    }
+
+                    mMediaRecorder.setOutputFile(videoFilePath)
+                    mMediaRecorder.setVideoSize(480, 854)
+                    mMediaRecorder.setVideoEncodingBitRate(2_500_000) // For bitrate 2.5 Mbps
+                    mMediaRecorder.setVideoFrameRate(24)
+                    @Suppress("BlockingMethodInNonBlockingContext")
+                    mMediaRecorder.prepare()
+                    mVirtualDisplay = mMediaProjection?.createVirtualDisplay(
+                        VIRTUAL_DISPLAY_NAME,
+                        480,
+                        854,
+                        mScreenDensity,
+                        DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                        mMediaRecorder.surface,
+                        null,
+                        null
+                    )
+                    mMediaRecorder.start()
+                    isBusyRecording = true
+                    delay((duration.toLong() * 60_000L) + 1_000L)
+                    stopRecording(videoFilePath, folderFileName)
+                    delay(Random.nextInt(5, 7).toLong() * 60_000L)
+                }
             }
-            
-            mMediaRecorder.setOutputFile(videoFilePath)
-            mMediaRecorder.setVideoSize(480, 854)
-            mMediaRecorder.setVideoEncodingBitRate(2_500_000) // For bitrate 2.5 Mbps
-            mMediaRecorder.setVideoFrameRate(24)
-            mMediaRecorder.prepare()
-            
-            mVirtualDisplay = mMediaProjection?.createVirtualDisplay(
-                VIRTUAL_DISPLAY_NAME,
-                480,
-                854,
-                mScreenDensity,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                mMediaRecorder.surface,
-                null,
-                null
-            )
-            
-            mMediaRecorder.start()
-            isBusyRecording = true
-            coroutineScope.launch(Dispatchers.IO) {countRecorderTimer(duration, videoFilePath, folderFileName)}
         }
     }
     
-    private suspend fun countRecorderTimer(
-        duration: Int,
+    private fun stopRecording(
         videoFilePath: String,
         folderFileName: String
     ) {
-        if (isBusyRecording) {
-                delay((duration.toLong() * 5_000L) + 1_000L)
-                // Stop screen recording
-                mVirtualDisplay?.release()
-                mVirtualDisplay = null
-                mMediaRecorder.setOnErrorListener(null)
-                mMediaProjection?.stop()
-                mMediaRecorder.reset()
-                mMediaRecorder.release()
-                mMediaProjection = null
-                var isFileReady = false
-                while (!isFileReady) {
-                    if (File(videoFilePath).exists()) {
-                        sendVideoToStorage(videoFilePath, folderFileName)
-                        isFileReady = true
-                    }
-                }
-            }
+        // Stop screen recording
+        mVirtualDisplay?.release()
+        mVirtualDisplay = null
+        mMediaRecorder.setOnErrorListener(null)
+        mMediaProjection?.stop()
+        mMediaRecorder.reset()
+        mMediaRecorder.release()
+        mMediaProjection = null
+        sendVideoToStorage(videoFilePath, folderFileName)
+        isBusyRecording = false
     }
-    
+
     @SuppressLint("SimpleDateFormat")
     private fun sendVideoToStorage(videoFilePath: String, folderFileName: String) {
         userEmail?.also {
@@ -404,29 +405,10 @@ class MainForegroundService : Service() {
             val storageRef = Firebase.storage.reference
                 .child(folderPath)
             storageRef.child(videoFile.name).putFile(Uri.fromFile(videoFile)).addOnSuccessListener {
-                //triggerEn("$folderPath/${videoFile.name}")
                 File(videoFile.absolutePath).delete()
             }
         }
     }
-    
-    /*private fun triggerEn(text: String): Task<String> {
-        Log.d("INVOKED", "Func")
-        // Create the arguments to the callable function.
-        val data = hashMapOf(
-            "name" to text
-        )
-        return functions
-            .getHttpsCallable("encryptFile")
-            .call(data)
-            .continueWith { task ->
-                // This continuation runs on either success or failure, but if the task
-                // has failed then result will throw an Exception which will be
-                // propagated down.
-                val result = task.result?.data as String
-                result
-            }
-    }*/
     
     override fun onBind(intent: Intent): IBinder? {
         return null
