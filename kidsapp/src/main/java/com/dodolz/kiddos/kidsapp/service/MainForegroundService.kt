@@ -273,7 +273,9 @@ class MainForegroundService : Service() {
         val dbRef = Firebase.firestore.collection("User").document(childEmail)
         appInfo.namaAplikasi?.let {
             dbRef.collection("Aplikasi Dihapus").document(it).set(
-                hashMapOf("namaAplikasi" to it, "namaPaketAplikasi" to appInfo.namaPaketAplikasi)
+                hashMapOf("namaAplikasi" to it,
+                    "namaPaketAplikasi" to appInfo.namaPaketAplikasi,
+                "tanggal" to SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(System.currentTimeMillis())))
             )
             dbRef.collection("Detail Penggunaan").document(it).delete()
             dbRef.collection("Daftar Aplikasi").document(it).delete()
