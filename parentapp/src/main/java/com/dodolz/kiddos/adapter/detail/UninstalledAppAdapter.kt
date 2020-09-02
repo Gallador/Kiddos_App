@@ -7,18 +7,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dodolz.kiddos.R
-import com.dodolz.kiddos.model.detail.DetailApp
-import com.dodolz.kiddos.utils.ConvertByte
+import com.dodolz.kiddos.model.detail.UninstalledApp
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.android.synthetic.main.item_in_rv_detail_app.view.*
-import java.util.concurrent.TimeUnit
+import kotlinx.android.synthetic.main.item_in_rv_uninstalled_app.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
-class DetailAppAdapter(private val childEmail: String): RecyclerView.Adapter<DetailAppAdapter.MainListViewHolder>() {
+class UninstalledAppAdapter(private val childEmail: String): RecyclerView.Adapter<UninstalledAppAdapter.MainListViewHolder>() {
     
-    private var appList: MutableList<DetailApp> = mutableListOf()
+    private var appList: MutableList<UninstalledApp> = mutableListOf()
     
-    fun setData(data: MutableList<DetailApp>) {
+    fun setData(data: MutableList<UninstalledApp>) {
         appList = data
         notifyDataSetChanged()
     }
@@ -27,7 +27,7 @@ class DetailAppAdapter(private val childEmail: String): RecyclerView.Adapter<Det
         parent: ViewGroup,
         viewType: Int
     ): MainListViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_in_rv_detail_app, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_in_rv_uninstalled_app, parent, false)
         return MainListViewHolder(
             view,
             childEmail
@@ -46,7 +46,7 @@ class DetailAppAdapter(private val childEmail: String): RecyclerView.Adapter<Det
         private val storage = Firebase.storage
         private val storageRef = storage.reference.child("$childEmail/iconApp")
         @SuppressLint("DefaultLocale")
-        fun bindItem(data: DetailApp) {
+        fun bindItem(data: UninstalledApp) {
             with(itemView) {
                 storageRef.child("${data.namaPaketAplikasi}.png").downloadUrl
                     .addOnSuccessListener {
@@ -58,19 +58,8 @@ class DetailAppAdapter(private val childEmail: String): RecyclerView.Adapter<Det
                     // Handle any errors
                     }
                 txt_namaApp.text = data.namaAplikasi
-                data.durasiPenggunaan?.let {
-                    val hour = TimeUnit.MILLISECONDS.toHours(it)
-                    val minute = TimeUnit.MILLISECONDS.toMinutes(it) % TimeUnit.HOURS.toMinutes(1)
-                    val teks = if (hour == 0L) {
-                        "$minute Menit"
-                    } else {
-                        "$hour Jam $minute Menit"
-                    }
-                    txt_durasi.text = teks
-                }
-                data.penggunaanInternet?.let {
-                    val internet = ConvertByte.getSize(it)
-                    txt_internet.text = internet
+                data.waktuHapus?.let {
+                    txt_waktuHapus.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(System.currentTimeMillis()))
                 }
             }
         }

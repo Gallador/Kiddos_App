@@ -275,7 +275,7 @@ class MainForegroundService : Service() {
             dbRef.collection("Aplikasi Dihapus").document(it).set(
                 hashMapOf("namaAplikasi" to it,
                     "namaPaketAplikasi" to appInfo.namaPaketAplikasi,
-                "tanggal" to SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(System.currentTimeMillis())))
+                "waktuHapus" to System.currentTimeMillis())
             )
             dbRef.collection("Detail Penggunaan").document(it).delete()
             dbRef.collection("Daftar Aplikasi").document(it).delete()

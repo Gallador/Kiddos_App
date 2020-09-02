@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dodolz.kiddos.model.detail.DetailApp
+import com.dodolz.kiddos.model.detail.UninstalledApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -17,9 +18,13 @@ class AppDetailViewmodel: ViewModel() {
     
     private val db: FirebaseFirestore = Firebase.firestore
     private var childrenDetailApp: MutableMap<String, MutableList<DetailApp>> = mutableMapOf()
+    private var childrenUninstalledApp: MutableMap<String, MutableList<UninstalledApp>> = mutableMapOf()
     
     private val _listDetailApps: MutableLiveData<Pair<String, MutableList<DetailApp>>> by lazy {
         MutableLiveData<Pair<String, MutableList<DetailApp>>>()
+    }
+    private val _uninstalledApps: MutableLiveData<Pair<String, MutableList<UninstalledApp>>> by lazy {
+        MutableLiveData<Pair<String, MutableList<UninstalledApp>>>()
     }
     private val _changeDetailApps: MutableLiveData<Pair<String, MutableList<DetailApp>>> by lazy {
         MutableLiveData<Pair<String, MutableList<DetailApp>>>()
@@ -27,6 +32,8 @@ class AppDetailViewmodel: ViewModel() {
     
     val listDetailApps: LiveData<Pair<String, MutableList<DetailApp>>>
         get() = _listDetailApps
+    val uninstalledApps: LiveData<Pair<String, MutableList<UninstalledApp>>>
+        get() = _uninstalledApps
     val changeDetailApps: LiveData<Pair<String, MutableList<DetailApp>>>
         get() = _changeDetailApps
     
@@ -53,7 +60,7 @@ class AppDetailViewmodel: ViewModel() {
             }
         }
     }
-    
+
     fun changeSortData(itemIndex: Int, childEmail: String) {
         childrenDetailApp[childEmail]?.let { list ->
             when (itemIndex) {
@@ -71,4 +78,27 @@ class AppDetailViewmodel: ViewModel() {
             }
         }
     }
+
+    fun getUnistalledApps(childEmail: String) = viewModelScope.launch(Dispatchers.IO) {
+        if (childrenUninstalledApp[childEmail] == null) {
+            val result: MutableList<UninstalledApp> = mutableListOf()
+            db.collection("User").document(childEmail).collection("Aplikasi Dihapus")
+                .orderBy("waktuHapus", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener { task ->
+                    task.result?.let {
+                        for (document in it) {
+                            result.add(document.toObject())
+                        }
+                        _uninstalledApps.postValue(Pair(childEmail, result))
+                        childrenUninstalledApp[childEmail] = result
+                    }
+                }
+        } else {
+            childrenUninstalledApp[childEmail]?.let {
+                _uninstalledApps.postValue(Pair(childEmail, it))
+            }
+        }
+    }
+
 }
