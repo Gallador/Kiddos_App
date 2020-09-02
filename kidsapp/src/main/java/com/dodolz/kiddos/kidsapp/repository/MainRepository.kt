@@ -6,6 +6,7 @@ import android.util.Log
 import com.dodolz.kiddos.kidsapp.model.AppIcon
 import com.dodolz.kiddos.kidsapp.model.PhoneUsage
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -48,6 +49,9 @@ class MainRepository {
             listOfAllAppCollectionRef.document(appUsage.namaAplikasi).set(
                 hashMapOf("namaAplikasi" to appUsage.namaAplikasi, "namaPaketAplikasi" to appUsage.namaPaketAplikasi)
             )
+            try {
+                userRef.collection("Aplikasi Dihapus").document(appUsage.namaAplikasi).delete()
+            } catch (err: FirebaseFirestoreException) { }
         }
         
         //Mengupload data riwayat penggunaan aplikasi
