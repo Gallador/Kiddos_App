@@ -56,16 +56,16 @@ class HomeFragment : Fragment() {
             viewmodel.loadChildrenUsageSum(it)
             viewmodel.loadChildrenRecentApp(it)
         })
-        viewmodel.usageSum.observe(viewLifecycleOwner, Observer{ updateUsageSum(it, context) })
+        viewmodel.usageSum.observe(viewLifecycleOwner, Observer{ updateUsageSum(it) })
         viewmodel.recentApps.observe(viewLifecycleOwner, Observer { updateRecentApp(it) })
     }
     
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
-    private fun updateUsageSum(data: ChildInfo, context: Context) {
+    private fun updateUsageSum(data: ChildInfo) {
         // Download app icon for appPalingLamaDiakses from child directory in storage
         data.timestampPemutakhiranData?.let {
             val timestamp: Long = it.toString().toLong()
-            val sdf = SimpleDateFormat("HH:mm")
+            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
             val netDate = Date(timestamp)
             txt_waktuDimutakhirkan.text = "Dimutakhirkan ${sdf.format(netDate)}"
         }
@@ -84,7 +84,6 @@ class HomeFragment : Fragment() {
                     .load(R.drawable.ic_home_24)
                     .into(img_appPalingLama)
             }
-        //--------------------------------------
 
         data.appPalingLamaDiakses?.let {
             txt_appPalingLama.text = it[0]

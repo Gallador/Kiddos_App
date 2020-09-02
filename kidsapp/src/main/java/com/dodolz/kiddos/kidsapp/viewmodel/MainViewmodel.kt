@@ -9,9 +9,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dodolz.kiddos.kidsapp.model.AppIcon
-import com.dodolz.kiddos.kidsapp.model.ChildSetting
 import com.dodolz.kiddos.kidsapp.model.PhoneUsage
 import com.dodolz.kiddos.kidsapp.repository.MainRepository
+import com.dodolz.kiddos.kidsapp.util.GetUninstalledApps
 import com.dodolz.kiddos.kidsapp.util.PhoneUsageStatsUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,14 +23,9 @@ class MainViewmodel(application: Application): AndroidViewModel(application) {
     private val _phoneUsageLiveData: MutableLiveData<Triple<String, PhoneUsage, Map<String, AppIcon>>> by lazy {
         MutableLiveData<Triple<String, PhoneUsage, Map<String, AppIcon>>>()
     }
-    private val _childSetting: MutableLiveData<Pair<String, ChildSetting>> by lazy {
-        MutableLiveData<Pair<String, ChildSetting>>()
-    }
     
     val phoneUsage: LiveData<Triple<String, PhoneUsage, Map<String, AppIcon>>>
         get() = _phoneUsageLiveData
-    val childSetting: LiveData<Pair<String, ChildSetting>>
-        get() = _childSetting
     
     fun sendLocation(lat: Double, long: Double, email: String) = viewModelScope.launch(Dispatchers.IO) {
         mainRepository.sendLocation(lat, long, email)
@@ -50,6 +45,10 @@ class MainViewmodel(application: Application): AndroidViewModel(application) {
                 }
                 launch(Dispatchers.IO) {
                     mainRepository.sendAppIconToStorage(mapOfAppIcon, app.filesDir.absolutePath, email)
+                }
+                launch(Dispatchers.IO) {
+                    val loadUninstallApp = GetUninstalledApps(app)
+                    loadUninstallApp.getUninstalledApp(email)
                 }
             }
         }

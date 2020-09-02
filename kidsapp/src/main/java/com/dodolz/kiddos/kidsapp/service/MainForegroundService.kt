@@ -10,8 +10,6 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
@@ -39,6 +37,7 @@ import com.dodolz.kiddos.kidsapp.activity.LimitUsageActivity
 import com.dodolz.kiddos.kidsapp.model.AppInfo
 import com.dodolz.kiddos.kidsapp.model.AppInfoForRestrict
 import com.dodolz.kiddos.kidsapp.repository.MainRepository
+import com.dodolz.kiddos.kidsapp.util.GetUninstalledApps
 import com.dodolz.kiddos.kidsapp.util.PhoneUsageStatsUtils
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
@@ -158,7 +157,8 @@ class MainForegroundService : Service() {
                                     )
                                 }
                                 launch(Dispatchers.IO) {
-                                    getUninstalledApp(it)
+                                    val loadUninstallApp = GetUninstalledApps(applicationContext)
+                                    loadUninstallApp.getUninstalledApp(it)
                                 }
                                 CoroutineScope(Dispatchers.Main).launch {
                                     getLocation(it)
@@ -254,46 +254,6 @@ class MainForegroundService : Service() {
             }
         }
         return durasiPenggunaan
-    }
-
-    private fun getUninstalledApp(childEmail: String) {
-        val dbRef = Firebase.firestore.collection("User").document(childEmail)
-        dbRef.collection("Daftar Aplikasi").get()
-            .addOnSuccessListener {
-                for (doc in it) {
-                    val appInfo: AppInfo = doc.toObject()
-                    appInfo.namaPaketAplikasi?.let { packName ->
-                        if (getAppInfo(packName) != null) deleteAppForDB(appInfo, childEmail)
-                    }
-                }
-            }
-    }
-
-    private fun deleteAppForDB(appInfo: AppInfo, childEmail: String) {
-        val dbRef = Firebase.firestore.collection("User").document(childEmail)
-        appInfo.namaAplikasi?.let {
-            dbRef.collection("Aplikasi Dihapus").document(it).set(
-                hashMapOf("namaAplikasi" to it,
-                    "namaPaketAplikasi" to appInfo.namaPaketAplikasi,
-                "waktuHapus" to System.currentTimeMillis())
-            )
-            dbRef.collection("Detail Penggunaan").document(it).delete()
-            dbRef.collection("Daftar Aplikasi").document(it).delete()
-            dbRef.collection("Pengaturan").document("Perekaman")
-                .collection("Aktif").document(it).delete()
-            dbRef.collection("Pengaturan").document("Pembatasan")
-                .collection("Aktif").document(it).delete()
-            dbRef.collection("Pengaturan").document("Blokir")
-                .collection("Aktif").document(it).delete()
-        }
-    }
-
-    private fun getAppInfo(packageName: String): ApplicationInfo? {
-        return try {
-            applicationContext.packageManager.getApplicationInfo(packageName, 0)
-        } catch (e: PackageManager.NameNotFoundException) {
-            null
-        }
     }
 
     @SuppressLint("MissingPermission")
