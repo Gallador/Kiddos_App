@@ -261,7 +261,6 @@ class MainForegroundService : Service() {
         val locationManager: LocationManager? = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val gpsStatus = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
         if (gpsStatus) {
-            //Log.d("MAYBE", locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)?.latitude.toString())
             val locListener = object : LocationListener {
                 override fun onLocationChanged(location: Location?) {
                     location?.also { it ->
@@ -379,7 +378,7 @@ class MainForegroundService : Service() {
                     isBusyRecording = true
                     delay((duration.toLong() * 60_000L) + 1_000L)
                     stopRecording(videoFilePath, folderFileName)
-                    delay(Random.nextInt(5, 7).toLong() * 60_000L)
+                    delay(Random.nextLong(5L, 8L) * 60_000L)
                 }
             }
         }
