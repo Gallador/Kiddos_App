@@ -7,6 +7,8 @@ This app using [Kotlin Coroutine](https://developer.android.com/kotlin/coroutine
 - [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
 - [Navigation](https://developer.android.com/topic/libraries/architecture/navigation/)
 
+This app also use Firebase Firestore for database, Firebase Auth for user authentication and Firebase Cloud Storage for store user's files.
+
 ## Key feature:
 - Parents can monitor the child's smartphone usage information such as the most used application, the child's application access history, total internet usage, and the total duration of the child's smartphone usage on that day.
 - Parents can monitor the use of applications installed on the child's smartphone, such as the duration of use and internet bandwidth of each application, and can monitor applications that have been removed by the child from their smartphone.
